@@ -10,6 +10,5 @@ public class Filer extends Activity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.filer);
-    
   }
 }
