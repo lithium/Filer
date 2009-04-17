@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row"
+    android:layout_width="fill_parent"
+    android:layout_height="40sp"
+    >
+  <ImageView
+    android:id="@+id/row_mimetype"
+    android:layout_height="32sp"
+    android:layout_width="32sp"
+    android:layout_alignParentLeft="true"
+    android:paddingTop="4sp"
+    />
+  <TextView 
+    android:id="@+id/row_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
+    android:layout_toRightOf="@id/row_mimetype"
+    android:layout_centerVertical="true"
+    />
+  <ImageView
+    android:id="@+id/row_icon"
+    android:layout_width="32sp"
+    android:layout_height="32sp"
+    android:layout_alignParentRight="true"
+    android:paddingTop="6sp"
+    android:paddingRight="4sp"
+    />
+  <TextView android:id="@+id/row_size"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:paddingRight="6sp"
+    android:textSize="12sp"
+    />
+  <TextView android:id="@+id/row_mtime" 
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentBottom="true"
+    android:paddingRight="6sp"
+    android:textSize="12sp"
+    />
+</RelativeLayout>

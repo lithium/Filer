@@ -3,4 +3,6 @@
     <string name="app_name">Filer</string>
 
     <string name="no_storage">No storage found.</string>
+
+    <string name="toast_shortcut_hint">Longclick to create a shortcut</string>
 </resources>
