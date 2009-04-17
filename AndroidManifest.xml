@@ -11,6 +11,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
+
+    <provider android:name="com.hlidskialf.android.filer.MimeProvider"
+              android:authorities="com.hlidskialf.android.filer"/>
 </manifest> 
