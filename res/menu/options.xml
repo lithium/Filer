@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/options_menu_unyank_all"
+    android:icon="@android:drawable/ic_menu_close_clear_cancel"
+    android:visible="false"
+    android:title="@string/unyank_all"/>
+  <item android:id="@+id/options_menu_copy"
+    android:icon="@android:drawable/ic_menu_share"
+    android:visible="false"
+    android:title="@string/copy_here"/>
+  <item android:id="@+id/options_menu_move"
+    android:icon="@android:drawable/ic_menu_set_as"
+    android:visible="false"
+    android:title="@string/move_here"/>
+  <item android:id="@+id/options_menu_mkdir"
+    android:icon="@android:drawable/ic_menu_add"
+    android:title="@string/new_directory"/>
+  <item android:id="@+id/options_menu_prefs"
+    android:icon="@android:drawable/ic_menu_preferences"
+    android:title="@string/preferences"/>
+  <item android:id="@+id/options_menu_help"
+    android:icon="@android:drawable/ic_menu_help"
+    android:title="@string/help"/>
+</menu>

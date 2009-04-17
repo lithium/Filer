@@ -5,4 +5,18 @@
     <string name="no_storage">No storage found.</string>
 
     <string name="toast_shortcut_hint">Longclick to create a shortcut</string>
+
+
+    <string name="yank">Select</string>
+    <string name="unyank">Un-Select</string>
+    <string name="open_as">Open as...</string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+
+    <string name="unyank_all">Unselect All</string>
+    <string name="copy_here">Copy here</string>
+    <string name="move_here">Move here</string>
+    <string name="new_directory">New Folder</string>
+    <string name="preferences">Preferences</string>
+    <string name="help">Help</string>
 </resources>
