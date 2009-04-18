@@ -1,6 +1,5 @@
 package com.hlidskialf.android.filer;
 
-
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,24 +10,24 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-import android.widget.ListView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.view.ContextMenu;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
+import java.util.Stack;
 
 public class FilerActivity extends ListActivity
 {
@@ -40,6 +39,7 @@ public class FilerActivity extends ListActivity
   private SharedPreferences mPrefs;
   private ArrayList<String> mYanked;
   private boolean mIgnoreNextClick = false; // hack for long click ..
+  private Stack<String> mPathHistory;
 
   private IntentFilter mMountFilter;
   private BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
@@ -129,6 +129,8 @@ public class FilerActivity extends ListActivity
     mMountFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED); 
     mMountFilter.addAction(Intent.ACTION_MEDIA_MOUNTED); 
     mMountFilter.addDataScheme("file");
+
+    mPathHistory = new Stack<String>();
 
     mYanked = new ArrayList<String>();
     mCurFiles = new ArrayList<String>();
@@ -295,8 +297,11 @@ public class FilerActivity extends ListActivity
   @Override
   public boolean onKeyDown(int code, KeyEvent event) {
     if (code == KeyEvent.KEYCODE_BACK) {
-      fillData(mCurDir.getParentFile());
-      return true;
+      mPathHistory.pop();
+      if (mPathHistory.size() > 0) {
+        fillData(new File( mPathHistory.peek() ));
+        return true;
+      }
     }
     return super.onKeyDown(code, event);
   }
@@ -312,6 +317,9 @@ public class FilerActivity extends ListActivity
     } catch (Exception e) {
       return;
     }
+
+    if (mPathHistory.size() < 1 || !mCurDir.getPath().equals( mPathHistory.peek() ))
+      mPathHistory.push(mCurDir.getPath());
 
     mCurFiles.clear();
     String[] ls = mCurDir.list();
