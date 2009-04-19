@@ -10,6 +10,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".FilerPreferencesActivity" />
     </application>
 
     <provider android:name="com.hlidskialf.android.filer.MimeProvider"

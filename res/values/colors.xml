@@ -1,0 +1,4 @@
+<resources>
+  <drawable name="yanked">#ffeaad00</drawable>
+  <drawable name="unyanked">#00000000</drawable>
+</resources>

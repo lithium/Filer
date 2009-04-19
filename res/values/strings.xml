@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Filer</string>
+    <string name="app_version">v1.0</string>
+    <string name="app_about">Published by Hlidskialf Software\nNo warranty of any kind provided.</string>
 
+
+    <!-- phrases used in dialogs or toast -->
     <string name="no_storage">No storage found.</string>
-
     <string name="toast_shortcut_hint">Longclick to create a shortcut</string>
 
 
+    <!-- actions -->
+    <string name="yank_buffer">Show files</string>
     <string name="yank">Select</string>
     <string name="unyank">Un-Select</string>
     <string name="open_as">Open as...</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
-
-    <string name="unyank_all">Unselect All</string>
+    <string name="unyank_all">Unselect all</string>
     <string name="copy_here">Copy here</string>
     <string name="move_here">Move here</string>
-    <string name="new_directory">New Folder</string>
+    <string name="new_directory">New folder</string>
     <string name="preferences">Preferences</string>
     <string name="help">Help</string>
+    <string name="delete_all">Delete all</string>
+
+    <!-- preferences -->
+    <string name="pref_cat_filer">Filer Preferences</string>
+    <string name="pref_hide_dot">Hide dot files</string>
+    <string name="pref_hide_dot_summary">Hide files that start with a period</string>
+    <string name="pref_browse_root">Show device files</string>
+    <string name="pref_browse_root_summary">Show files not on removable media</string>
+    <string name="pref_home_path">Home directory</string>
+    <string name="pref_home_path_summary">Default starting directory</string>
+    <string name="pref_cat_about">About</string>
+    <string name="pref_about">About Filer</string>
+    <string name="pref_about_summary">Version info and credits</string>
+    <string name="pref_cat_mime">Mimetype Preferences</string>
+    <string name="pref_mime">File types</string>
+    <string name="pref_mime_summary">Configure file and mimetype associations</string>
+
 </resources>

@@ -4,6 +4,7 @@
     android:icon="@android:drawable/ic_menu_close_clear_cancel"
     android:visible="false"
     android:title="@string/unyank_all"/>
+    <!--
   <item android:id="@+id/options_menu_copy"
     android:icon="@android:drawable/ic_menu_share"
     android:visible="false"
@@ -12,6 +13,7 @@
     android:icon="@android:drawable/ic_menu_set_as"
     android:visible="false"
     android:title="@string/move_here"/>
+    -->
   <item android:id="@+id/options_menu_mkdir"
     android:icon="@android:drawable/ic_menu_add"
     android:title="@string/new_directory"/>

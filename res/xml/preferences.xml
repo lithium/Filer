@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory android:title="@string/pref_cat_filer">
+
+    <CheckBoxPreference android:key="hide_dot"
+      android:title="@string/pref_hide_dot"
+      android:summary="@string/pref_hide_dot_summary"
+      android:defaultValue="true"
+      />
+    <CheckBoxPreference android:key="browse_root"
+      android:title="@string/pref_browse_root"
+      android:summary="@string/pref_browse_root_summary"
+      android:defaultValue="false"
+      />
+    <EditTextPreference android:key="home_path"
+      android:title="@string/pref_home_path"
+      android:summary="@string/pref_home_path_summary"
+      />
+  </PreferenceCategory>
+
+  <PreferenceCategory android:title="@string/pref_cat_mime">
+    <Preference 
+      android:title="@string/pref_mime"
+      android:summary="@string/pref_mime_summary"
+    />
+  </PreferenceCategory>
+
+  <PreferenceCategory android:title="@string/pref_cat_about">
+    <DialogPreference 
+      android:title="@string/pref_about"
+      android:summary="@string/pref_about_summary"
+      android:dialogTitle="@string/pref_about"
+      android:dialogLayout="@layout/about"
+    />
+  </PreferenceCategory>
+  
+    
+</PreferenceScreen>

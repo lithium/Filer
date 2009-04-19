@@ -31,6 +31,8 @@ import java.util.Stack;
 
 public class FilerActivity extends ListActivity
 {
+  static private final int REQUEST_PREFERENCES=1;
+
   private File mRootFile,mCurDir,mStartFile;
   private boolean mBrowseRoot,mHideDot,mCreatingShortcut;
   private String mRootPath,mHomePath;
@@ -82,6 +84,11 @@ public class FilerActivity extends ListActivity
       String filename = mCurFiles.get(pos);
       File f = new File(mCurDir, filename);
 
+      if (mYanked.contains(f.getAbsolutePath())) 
+        v.setBackgroundResource(R.drawable.yanked);
+      else 
+        v.setBackgroundResource(R.drawable.unyanked);
+
       TextView name = (TextView)v.findViewById(R.id.row_name);
       TextView size = (TextView)v.findViewById(R.id.row_size);
       TextView mtime = (TextView)v.findViewById(R.id.row_mtime);
@@ -112,13 +119,11 @@ public class FilerActivity extends ListActivity
     super.onCreate(icicle);
     setContentView(R.layout.filer);
 
-    mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-    mBrowseRoot = mPrefs.getBoolean(Filer.PREF_BROWSE_ROOT, true);
-    mRootPath = mBrowseRoot ? "/" : Environment.getExternalStorageDirectory().toString();
-    mHideDot = mPrefs.getBoolean(Filer.PREF_HIDE_DOT, true);
-    mHomePath = mPrefs.getString(Filer.PREF_HOME_PATH, Environment.getExternalStorageDirectory().toString());
-
     Intent trigger = getIntent();
+
+    load_preferences();
+
+    /* determine starting directory */
     Uri uri = trigger.getData();
     mStartFile = new File(uri != null ? uri.getPath() : mHomePath);
     if (!mStartFile.isDirectory()) 
@@ -130,17 +135,19 @@ public class FilerActivity extends ListActivity
     mMountFilter.addAction(Intent.ACTION_MEDIA_MOUNTED); 
     mMountFilter.addDataScheme("file");
 
+    
     mPathHistory = new Stack<String>();
-
     mYanked = new ArrayList<String>();
     mCurFiles = new ArrayList<String>();
     mFileAdapter = new FileListAdapter(this);
     setListAdapter(mFileAdapter);
 
+
     if (mCreatingShortcut = Intent.ACTION_CREATE_SHORTCUT.equals(trigger.getAction())) {
       Toast t = Toast.makeText(this, R.string.toast_shortcut_hint, Toast.LENGTH_LONG);
       t.show();
     }
+
     registerForContextMenu(getListView());
   }
   @Override
@@ -162,7 +169,8 @@ public class FilerActivity extends ListActivity
     super.onSaveInstanceState(icicle);
 
     icicle.putStringArrayList("mYanked",mYanked);
-    icicle.putString("mCurDir", mCurDir.getPath());
+    if (mCurDir != null)
+      icicle.putString("mCurDir", mCurDir.getPath());
   }
   @Override 
   public void onRestoreInstanceState(Bundle icicle)
@@ -172,6 +180,28 @@ public class FilerActivity extends ListActivity
     String cur_dir = icicle.getString("mCurDir");
     if (cur_dir != null) fillData(new File(cur_dir));
   }
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+  {
+    if (requestCode == REQUEST_PREFERENCES) {
+      load_preferences();
+      fillData(mCurDir);
+    }
+  }
+  @Override
+  public boolean onKeyDown(int code, KeyEvent event) {
+    if (code == KeyEvent.KEYCODE_BACK) {
+      if (mPathHistory.size() > 1) {
+        mPathHistory.pop();
+        fillData(new File( mPathHistory.peek() ));
+        return true;
+      }
+    }
+    return super.onKeyDown(code, event);
+  }
+
+
+
 
   @Override
   public void onListItemClick(ListView lv, View v, int pos, long itemid)
@@ -194,28 +224,26 @@ public class FilerActivity extends ListActivity
     }
 
     if (mCreatingShortcut) {
-      //create_shortcut(f);
+      //TODO create_shortcut(f);
       return;
     }
 
-    //TODO
-    //start intent based on mimetype
+    //TODO start intent based on mimetype
   }
   @Override 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
   {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
+    String filename = mCurFiles.get(info.position);
 
-
-    if (info.position == 0) { // long click on .. goes to home
+    if (filename.equals("..")) { // long click on .. goes to home
       fillData(mStartFile);
       mIgnoreNextClick = true;
       return;
     }
 
     if (mCreatingShortcut) {
-      //TODO
-      //create_shortcut();
+      //TODO //create_shortcut();
       return;
     }
 
@@ -226,7 +254,7 @@ public class FilerActivity extends ListActivity
     MenuItem unyank = menu.findItem(R.id.context_menu_unyank);
     
     if (yank != null && unyank != null) {
-      File f = new File(mCurDir, mCurFiles.get(info.position));
+      File f = new File(mCurDir, filename);
       boolean vis = mYanked.contains(f.getPath());
       unyank.setVisible(vis);
       yank.setVisible(!vis);
@@ -236,11 +264,16 @@ public class FilerActivity extends ListActivity
   public boolean onContextItemSelected(MenuItem item)
   {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+    String filename = mCurFiles.get(info.position);
 
     switch (item.getItemId()) {
       case R.id.context_menu_yank:
+        yank_file(filename);
+        info.targetView.setBackgroundResource(R.drawable.yanked);
         return true;
       case R.id.context_menu_unyank:
+        unyank_file(filename);
+        info.targetView.setBackgroundResource(R.drawable.unyanked);
         return true;
       case R.id.context_menu_open:
         return true;
@@ -263,28 +296,36 @@ public class FilerActivity extends ListActivity
   public boolean onPrepareOptionsMenu(Menu menu)
   {
     MenuItem unyank_all = menu.findItem(R.id.options_menu_unyank_all);
+    boolean vis = (mYanked != null) && (mYanked.size() > 0);
+    unyank_all.setVisible(vis);
+    /*
     MenuItem copy = menu.findItem(R.id.options_menu_copy);
     MenuItem move = menu.findItem(R.id.options_menu_move);
 
-    boolean vis = (mYanked != null) && (mYanked.size() > 0);
-    unyank_all.setVisible(vis);
     copy.setVisible(vis);
     move.setVisible(vis);
+    */
     return true;
   }
   @Override
   public boolean onOptionsItemSelected(MenuItem item)
   {
     switch (item.getItemId()) {
-      case R.id.options_menu_unyank_all:
-        return true;
+        /*
       case R.id.options_menu_copy:
         return true;
       case R.id.options_menu_move:
         return true;
+        */
+      case R.id.options_menu_unyank_all:
+        mYanked.clear();
+        fillData(mCurDir);
+        update_yankbar_visibility();
+        return true;
       case R.id.options_menu_mkdir:
         return true;
       case R.id.options_menu_prefs:
+        startActivityForResult( new Intent(this, FilerPreferencesActivity.class), REQUEST_PREFERENCES );
         return true;
       case R.id.options_menu_help:
         return true;
@@ -294,17 +335,9 @@ public class FilerActivity extends ListActivity
 
 
 
-  @Override
-  public boolean onKeyDown(int code, KeyEvent event) {
-    if (code == KeyEvent.KEYCODE_BACK) {
-      mPathHistory.pop();
-      if (mPathHistory.size() > 0) {
-        fillData(new File( mPathHistory.peek() ));
-        return true;
-      }
-    }
-    return super.onKeyDown(code, event);
-  }
+
+
+
 
 
 
@@ -348,6 +381,78 @@ public class FilerActivity extends ListActivity
     if (tv != null) {
       tv.setVisibility(View.VISIBLE);
       tv.setText(reason_res_id);
+    }
+  }
+
+
+
+
+  private void load_preferences()
+  {
+    if (mPrefs == null) mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+    mBrowseRoot = mPrefs.getBoolean(Filer.PREF_BROWSE_ROOT, true);
+    mRootPath = mBrowseRoot ? "/" : Environment.getExternalStorageDirectory().toString();
+    mHideDot = mPrefs.getBoolean(Filer.PREF_HIDE_DOT, true);
+    mHomePath = mPrefs.getString(Filer.PREF_HOME_PATH, "");
+    
+    if (mHomePath == null || mHomePath.length() < 1) 
+      mHomePath = Environment.getExternalStorageDirectory().toString();
+  }
+  private void yank_file(String filename) {
+    File f = new File(mCurDir, filename);
+    String path = f.getAbsolutePath();
+    if (!mYanked.contains(path)) {
+      mYanked.add(path);
+    }
+    update_yankbar_visibility();
+  }
+  private void unyank_file(String filename) {
+    File f = new File(mCurDir, filename);
+    String path = f.getAbsolutePath();
+    if (mYanked.contains(path)) {
+      mYanked.remove(path);
+    }
+    update_yankbar_visibility();
+  }
+  private boolean is_file_yanked(String filename) {
+    File f = new File(mCurDir, filename);
+    return mYanked.contains(f.getAbsolutePath());
+  }
+  private void update_yankbar_visibility()
+  {
+    View yank_bar = findViewById(R.id.yank_bar);
+    if (mYanked == null) return;
+    boolean vis = (mYanked.size() > 0);
+    if (yank_bar != null) yank_bar.setVisibility(vis ? View.VISIBLE : View.GONE);
+  }
+
+  private ArrayList<File> yank_buffer_contents()
+  {
+    if (mYanked == null) return null;
+    ArrayList<File> ret = new ArrayList<File>();
+    int len = mYanked.size();
+    int i;
+    for (i=0; i < len; i++) {
+      String path = mYanked.get(i);
+      File f = new File(path);
+      if (f == null || ! f.exists()) continue;
+      ret.add(f);
+      if (f.isDirectory()) {
+        yank_buffer_contents_append_directory(ret, f);
+      }
+    }
+    return ret;
+  }
+  private void yank_buffer_contents_append_directory(ArrayList<File> ret, File dir)
+  {
+    String[] files = dir.list();
+    int i;
+    for (i=0; i < files.length; i++) {
+      File f = new File(dir, files[i]);
+      ret.add(f);
+      if (f.isDirectory())
+        yank_buffer_contents_append_directory(ret, f);
     }
   }
 }
