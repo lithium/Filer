@@ -1,8 +1,10 @@
 package com.hlidskialf.android.filer;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -147,6 +149,68 @@ public class FilerActivity extends ListActivity
       Toast t = Toast.makeText(this, R.string.toast_shortcut_hint, Toast.LENGTH_LONG);
       t.show();
     }
+
+    /* set up yank bar buttons */
+    View buffer = findViewById(R.id.yank_bar_buffer);
+    buffer.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_yank_buffer_title) 
+          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
+          })
+          .setNeutralButton(R.string.unyank_all, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              unyank_all(); 
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+    View copy = findViewById(R.id.yank_bar_copy);
+    copy.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_copy_buffer_title) 
+          .setPositiveButton(R.string.copy_here, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              copy_yank_buffer_here();
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+    View move = findViewById(R.id.yank_bar_move);
+    move.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_move_buffer_title) 
+          .setPositiveButton(R.string.move_here, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              move_yank_buffer_here();
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+    View rm = findViewById(R.id.yank_bar_delete);
+    rm.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_delete_buffer_title) 
+          .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              delete_yank_buffer();
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+
 
     registerForContextMenu(getListView());
   }
@@ -318,9 +382,7 @@ public class FilerActivity extends ListActivity
         return true;
         */
       case R.id.options_menu_unyank_all:
-        mYanked.clear();
-        fillData(mCurDir);
-        update_yankbar_visibility();
+        unyank_all();
         return true;
       case R.id.options_menu_mkdir:
         return true;
@@ -419,6 +481,12 @@ public class FilerActivity extends ListActivity
     File f = new File(mCurDir, filename);
     return mYanked.contains(f.getAbsolutePath());
   }
+  private void unyank_all()
+  {
+    mYanked.clear();
+    fillData(mCurDir);
+    update_yankbar_visibility();
+  }
   private void update_yankbar_visibility()
   {
     View yank_bar = findViewById(R.id.yank_bar);
@@ -455,4 +523,26 @@ public class FilerActivity extends ListActivity
         yank_buffer_contents_append_directory(ret, f);
     }
   }
+  private AlertDialog.Builder build_yank_buffer_dialog(int title_res)
+  {
+    ArrayList<File> files = yank_buffer_contents();
+    ListView lv = new ListView(this);
+    //lv.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, files));
+    lv.setAdapter(new ArrayAdapter(this, R.layout.dialog_list_item, files));
+
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this)
+      .setTitle(title_res)
+      .setView(lv)
+      .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
+      })
+      ;
+    return builder;
+  }
+
+  private void copy_yank_buffer_here() { }
+  private void move_yank_buffer_here() { }
+  private void delete_yank_buffer() { }
+
 }

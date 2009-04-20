@@ -40,4 +40,10 @@
     <string name="pref_mime">File types</string>
     <string name="pref_mime_summary">Configure file and mimetype associations</string>
 
+    <!-- dialogs -->
+    <string name="dialog_yank_buffer_title">Selected Files</string>
+    <string name="dialog_copy_buffer_title">Copy Selected Files?</string>
+    <string name="dialog_move_buffer_title">Move Selected Files?</string>
+    <string name="dialog_delete_buffer_title">Delete Selected Files?</string>
+
 </resources>
