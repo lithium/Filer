@@ -373,8 +373,22 @@ public class FilerActivity extends ListActivity
         });
         return true;
       case R.id.context_menu_delete:
-        FileSystem.delete(FilerActivity.this, new String[] {f.getAbsolutePath()}, mRecursiveDelete);
-        fillData(mCurDir);
+        final String path = f.getAbsolutePath();
+        build_yank_buffer_dialog(R.string.dialog_delete_buffer_title, path) 
+          .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              final DialogInterface dia = dialog;
+              AlertLog log = new AlertLog(FilerActivity.this, R.string.deleting_files);
+              log.setDoneListener(new AlertLog.DoneListener() {
+                public void done() {
+                  fillData(mCurDir);
+                }
+              });
+              
+              FileSystem.delete(FilerActivity.this, log, new String[] {path}, mRecursiveDelete);
+            }
+          })
+          .show();
         return true;
     }
     return true;
@@ -561,11 +575,17 @@ public class FilerActivity extends ListActivity
         yank_buffer_contents_append_directory(ret, f);
     }
   }
-  private AlertDialog.Builder build_yank_buffer_dialog(int title_res)
+  private AlertDialog.Builder build_yank_buffer_dialog(int title_res, String path)
   {
-    ArrayList<File> files = yank_buffer_contents();
+    ArrayList<File> files;
     ListView lv = new ListView(this);
-    //lv.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, files));
+    if (path != null) {
+      files = new ArrayList<File>(1);
+      files.add(new File(path));
+    }
+    else {
+      files = yank_buffer_contents();
+    }
     lv.setAdapter(new ArrayAdapter(this, R.layout.dialog_list_item, files));
 
 
@@ -584,7 +604,7 @@ public class FilerActivity extends ListActivity
     View buffer = findViewById(R.id.yank_bar_buffer);
     buffer.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_yank_buffer_title) 
+        build_yank_buffer_dialog(R.string.dialog_yank_buffer_title, null)
           .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
           })
@@ -594,14 +614,13 @@ public class FilerActivity extends ListActivity
               unyank_all(); 
             }
           })
-          .create()
           .show();
       }
     });
     View copy = findViewById(R.id.yank_bar_copy);
     copy.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_copy_buffer_title) 
+        build_yank_buffer_dialog(R.string.dialog_copy_buffer_title, null) 
           .setPositiveButton(R.string.copy_here, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
               FileSystem.copy(FilerActivity.this, mYanked.toArray(new String[0]), mCurDir);
@@ -609,19 +628,24 @@ public class FilerActivity extends ListActivity
               unyank_all();
             }
           })
-          .create()
           .show();
       }
     });
     View move = findViewById(R.id.yank_bar_move);
     move.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_move_buffer_title) 
+        build_yank_buffer_dialog(R.string.dialog_move_buffer_title, null) 
           .setPositiveButton(R.string.move_here, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.move(FilerActivity.this, mYanked.toArray(new String[0]), mCurDir);
-              dialog.dismiss();
-              unyank_all();
+              final DialogInterface dia = dialog;
+              AlertLog log = new AlertLog(FilerActivity.this, R.string.moving_files);
+              log.setDoneListener(new AlertLog.DoneListener() {
+                public void done() {
+                  dia.dismiss();
+                  unyank_all();
+                }
+              });
+              FileSystem.move(FilerActivity.this, log, mYanked.toArray(new String[0]), mCurDir);
             }
           })
           .show();
@@ -630,15 +654,20 @@ public class FilerActivity extends ListActivity
     View rm = findViewById(R.id.yank_bar_delete);
     rm.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_delete_buffer_title) 
+        build_yank_buffer_dialog(R.string.dialog_delete_buffer_title, null) 
           .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.delete(FilerActivity.this, mYanked.toArray(new String[0]), mRecursiveDelete);
-              dialog.dismiss();
-              unyank_all();
+              final DialogInterface dia = dialog;
+              AlertLog log = new AlertLog(FilerActivity.this, R.string.deleting_files);
+              log.setDoneListener(new AlertLog.DoneListener() {
+                public void done() {
+                  dia.dismiss();
+                  unyank_all();
+                }
+              });
+              FileSystem.delete(FilerActivity.this, log, mYanked.toArray(new String[0]), mRecursiveDelete);
             }
           })
-          .create()
           .show();
       }
     });

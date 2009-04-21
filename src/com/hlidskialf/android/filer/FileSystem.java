@@ -17,53 +17,37 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-class AlertLog {
-  private AlertDialog mDialog = null;
-  private Context mContext = null;
-  private TextView mText = null;
-
-  public AlertLog(Context context, int title_res)
-  {
-    mContext = context;
-    if (mContext != null) {
-      LayoutInflater li = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      View v = li.inflate(R.layout.alertlog,null);
-      mDialog = new AlertDialog.Builder(context)
-        .setTitle(title_res)
-        .setView(v)
-        .show();
-      mText = (TextView)mDialog.findViewById(android.R.id.text1);
-    }
-  }
-  public void append(String text) { if (mText != null) mText.append(text); }
-  public void appendln(String text) { append(text+"\n"); }
-  public void waitForIt() { 
-    if (mDialog == null) dismiss();
-
-    Button ok = (Button)mDialog.findViewById(android.R.id.button1);
-    ok.setVisibility(View.VISIBLE);
-    ok.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) { dismiss(); }
-    });
-  }
-  public void dismiss() { if (mDialog != null) mDialog.dismiss(); }
-}
 
 public class FileSystem
 {
-  public static void file_deepdelete(File src)
+  public static void copy(Context context, String[] src, File dest)
   {
-    if (src.isDirectory()) {
-      String ls[] = src.list();
-      int i;
-      for (i = 0; i < ls.length; i++) {
-        file_deepdelete(new File(src, ls[i]));
+  /*
+    AlertLog log = new AlertLog(context, R.string.copying_files);
+    if (!(dest.exists() && dest.isDirectory())) 
+      return;
+    int i;
+    for (i=0; i < src.length; i++) {
+      File fsrc = new File(src[i]);
+      if (!fsrc.exists()) {
+        log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
+        continue;
       }
-    } 
-    src.delete();
+      File fnew = new File(dest, fsrc.getName());
+      if (fnew.exists()) {
+        log.appendln(context.getString(R.string.file_exists, fnew.getAbsolutePath()));
+        continue; 
+      }
+      try {
+        log.appendln(fsrc.getAbsolutePath() + " -> " + fnew.getAbsolutePath());
+        file_deepcopy(context, fsrc, fnew);
+      } catch (java.io.IOException ex) {
+      }
+    }
+    log.waitForIt();
+    */
   }
-
-  public static void file_deepcopy(Context context, File src, File dest) throws java.io.IOException {
+  private static void file_deepcopy(Context context, File src, File dest) throws java.io.IOException {
     if (src.isDirectory()) {
       if (!dest.exists())
         dest.mkdirs();
@@ -77,7 +61,7 @@ public class FileSystem
       file_copy(context, src, dest);
     }
   }
-  public static void file_copy(Context context, File src, File dest) throws java.io.IOException {
+  private static void file_copy(Context context, File src, File dest) throws java.io.IOException {
     final FileInputStream in = new FileInputStream(src);
     final FileOutputStream out = new FileOutputStream(dest);
 
@@ -121,35 +105,11 @@ public class FileSystem
 
   }
 
-  public static void copy(Context context, String[] src, File dest)
-  {
-    AlertLog log = new AlertLog(context, R.string.copying_files);
-    if (!(dest.exists() && dest.isDirectory())) 
-      return;
-    int i;
-    for (i=0; i < src.length; i++) {
-      File fsrc = new File(src[i]);
-      if (!fsrc.exists()) {
-        log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
-        continue;
-      }
-      File fnew = new File(dest, fsrc.getName());
-      if (fnew.exists()) {
-        log.appendln(context.getString(R.string.file_exists, fnew.getAbsolutePath()));
-        continue; 
-      }
-      try {
-        log.appendln(fsrc.getAbsolutePath() + " -> " + fnew.getAbsolutePath());
-        file_deepcopy(context, fsrc, fnew);
-      } catch (java.io.IOException ex) {
-      }
-    }
-    log.waitForIt();
-  }
+  
 
-  public static void move(Context context, String[] src, File dest)
+  /* move */
+  public static void move(Context context, AlertLog log, String[] src, File dest)
   {
-    AlertLog log = new AlertLog(context, R.string.moving_files);
     if (!(dest.exists() && dest.isDirectory())) 
       return;
     int i;
@@ -170,27 +130,54 @@ public class FileSystem
     log.waitForIt();
   }
 
-  public static void delete(Context context, String[] src, boolean recursive)
+
+  /* delete */
+  public static void delete(Context _context, AlertLog _log, String[] _src, boolean _recursive)
   {
-    AlertLog log = new AlertLog(context, R.string.deleting_files);
-    int i;
-    for (i=0; i < src.length; i++) {
-      File fsrc = new File(src[i]);
-      if (!fsrc.exists()) {
-        log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
-        continue;
+    final Context context = _context;
+    final AlertLog log = _log; 
+    final String[] src = _src;
+    final boolean recursive = _recursive;
+
+    Thread thread = new Thread() {
+      public void run() {
+        int i;
+        for (i=0; i < src.length; i++) {
+          File fsrc = new File(src[i]);
+          if (!fsrc.exists()) {
+            log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
+            continue;
+          }
+          if (recursive) {
+            file_deepdelete(context, log, fsrc);
+          } else {
+            if (fsrc.isDirectory() && fsrc.list().length > 0) 
+              log.appendln(context.getString(R.string.directory_not_empty, fsrc.getAbsolutePath()));
+            else
+              file_delete(context, log, fsrc);
+          }
+        }
+        log.waitForIt();
       }
-      if (recursive)
-        file_deepdelete(fsrc);
-      else {
-        if (fsrc.isDirectory() && fsrc.list().length > 0) 
-          log.appendln(context.getString(R.string.directory_not_empty, fsrc.getAbsolutePath()));
-        else
-          fsrc.delete();
-      }
-      log.appendln(context.getString(R.string.file_deleted, fsrc.getAbsolutePath()));
-    }
-    log.waitForIt();
+    };
+    thread.start();
   }
+  private static void file_deepdelete(Context context, AlertLog log, File src)
+  {
+    if (src.isDirectory()) {
+      String ls[] = src.list();
+      int i;
+      for (i = 0; i < ls.length; i++) {
+        file_deepdelete(context, log, new File(src, ls[i]));
+      }
+    } 
+    file_delete(context, log, src);
+  }
+  private static void file_delete(Context context, AlertLog log, File src)
+  {
+    src.delete();
+    log.appendln(context.getString(R.string.file_deleted, src.getAbsolutePath()));
+  }
+
 
 }
