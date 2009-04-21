@@ -335,6 +335,7 @@ public class FilerActivity extends ListActivity
   {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
     final String filename = mCurFiles.get(info.position);
+    final File f = new File(mCurDir, filename); 
 
     switch (item.getItemId()) {
       case R.id.context_menu_open:
@@ -352,7 +353,6 @@ public class FilerActivity extends ListActivity
         ai.setOnCompleteListener(new AlertInput.OnCompleteListener() {
           public void onCancel() {}
           public void onComplete(String value) {
-            File f = new File(mCurDir, filename);
             File fnew = new File(mCurDir, value);
             String msg;
             if (!f.exists()) {
@@ -373,6 +373,8 @@ public class FilerActivity extends ListActivity
         });
         return true;
       case R.id.context_menu_delete:
+        FileSystem.delete(FilerActivity.this, new String[] {f.getAbsolutePath()}, mRecursiveDelete);
+        fillData(mCurDir);
         return true;
     }
     return true;
@@ -602,7 +604,7 @@ public class FilerActivity extends ListActivity
         build_yank_buffer_dialog(R.string.dialog_copy_buffer_title) 
           .setPositiveButton(R.string.copy_here, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.copy(mYanked.toArray(new String[0]), mCurDir, FilerActivity.this);
+              FileSystem.copy(FilerActivity.this, mYanked.toArray(new String[0]), mCurDir);
               dialog.dismiss();
               unyank_all();
             }
@@ -617,7 +619,7 @@ public class FilerActivity extends ListActivity
         build_yank_buffer_dialog(R.string.dialog_move_buffer_title) 
           .setPositiveButton(R.string.move_here, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.move(mYanked.toArray(new String[0]), mCurDir, FilerActivity.this);
+              FileSystem.move(FilerActivity.this, mYanked.toArray(new String[0]), mCurDir);
               dialog.dismiss();
               unyank_all();
             }
@@ -631,7 +633,7 @@ public class FilerActivity extends ListActivity
         build_yank_buffer_dialog(R.string.dialog_delete_buffer_title) 
           .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.delete(mYanked.toArray(new String[0]), mRecursiveDelete, FilerActivity.this);
+              FileSystem.delete(FilerActivity.this, mYanked.toArray(new String[0]), mRecursiveDelete);
               dialog.dismiss();
               unyank_all();
             }

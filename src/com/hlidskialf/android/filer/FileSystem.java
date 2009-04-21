@@ -1,5 +1,10 @@
 package com.hlidskialf.android.filer;
 
+import android.os.Handler;
+import android.os.Message;
+import java.lang.Thread;
+import android.app.ProgressDialog;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,34 +51,77 @@ class AlertLog {
 
 public class FileSystem
 {
-  public static void file_deepcopy(File src, File dest) throws java.io.IOException {
+  public static void file_deepdelete(File src)
+  {
+    if (src.isDirectory()) {
+      String ls[] = src.list();
+      int i;
+      for (i = 0; i < ls.length; i++) {
+        file_deepdelete(new File(src, ls[i]));
+      }
+    } 
+    src.delete();
+  }
+
+  public static void file_deepcopy(Context context, File src, File dest) throws java.io.IOException {
     if (src.isDirectory()) {
       if (!dest.exists())
         dest.mkdirs();
       String ls[] = src.list();
       int i;
       for (i = 0; i < ls.length; i++) {
-        file_deepcopy(new File(src, ls[i]), new File(dest, ls[i]));
+        file_deepcopy(context, new File(src, ls[i]), new File(dest, ls[i]));
       }
     }
     else {
-      file_copy(src, dest);
+      file_copy(context, src, dest);
     }
   }
-  public static void file_copy(File src, File dest) throws java.io.IOException {
-    FileInputStream in = new FileInputStream(src);
-    FileOutputStream out = new FileOutputStream(dest);
+  public static void file_copy(Context context, File src, File dest) throws java.io.IOException {
+    final FileInputStream in = new FileInputStream(src);
+    final FileOutputStream out = new FileOutputStream(dest);
 
-    byte[] buf = new byte[1024];
-    int len;
-    while ((len = in.read(buf)) > 0) {
-      out.write(buf, 0, len);
-    }
-    in.close();
-    out.close();
+    final ProgressDialog pd = new ProgressDialog(context);
+    pd.setTitle(context.getString(R.string.copy_here));
+    pd.setMessage(context.getString(R.string.copying_file, src.getAbsolutePath()));
+    pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+    //final ProgressDialog pd = ProgressDialog.show(context, context.getString(R.string.copy_here), context.getString(R.string.copying_file, src.getAbsolutePath()));
+    pd.setMax( (int)src.length() );
+    pd.show();
+
+    final Handler handler = new Handler() {
+      @Override
+      public void handleMessage(Message msg) {
+        if (msg.what == 0) 
+          pd.dismiss();
+        else
+          pd.incrementProgressBy(msg.what);
+      }
+    };
+
+    Thread thread = new Thread(new Runnable() {
+      public void run() {
+        try  {
+          byte[] buf = new byte[1024];
+          int len;
+          int i=0;
+          while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+            if (++i % 5 == 0)
+              handler.sendEmptyMessage(len*5);
+          }
+          in.close();
+          out.close();
+        } catch (java.io.IOException ex) {
+        }
+        handler.sendEmptyMessage(0);
+      }
+    });
+    thread.start();
+
   }
 
-  public static void copy(String[] src, File dest, Context context)
+  public static void copy(Context context, String[] src, File dest)
   {
     AlertLog log = new AlertLog(context, R.string.copying_files);
     if (!(dest.exists() && dest.isDirectory())) 
@@ -92,14 +140,14 @@ public class FileSystem
       }
       try {
         log.appendln(fsrc.getAbsolutePath() + " -> " + fnew.getAbsolutePath());
-        file_deepcopy(fsrc, fnew);
+        file_deepcopy(context, fsrc, fnew);
       } catch (java.io.IOException ex) {
       }
     }
     log.waitForIt();
   }
 
-  public static void move(String[] src, File dest, Context context)
+  public static void move(Context context, String[] src, File dest)
   {
     AlertLog log = new AlertLog(context, R.string.moving_files);
     if (!(dest.exists() && dest.isDirectory())) 
@@ -122,8 +170,27 @@ public class FileSystem
     log.waitForIt();
   }
 
-  public static void delete(String[] src, boolean recursive, Context context)
+  public static void delete(Context context, String[] src, boolean recursive)
   {
+    AlertLog log = new AlertLog(context, R.string.deleting_files);
+    int i;
+    for (i=0; i < src.length; i++) {
+      File fsrc = new File(src[i]);
+      if (!fsrc.exists()) {
+        log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
+        continue;
+      }
+      if (recursive)
+        file_deepdelete(fsrc);
+      else {
+        if (fsrc.isDirectory() && fsrc.list().length > 0) 
+          log.appendln(context.getString(R.string.directory_not_empty, fsrc.getAbsolutePath()));
+        else
+          fsrc.delete();
+      }
+      log.appendln(context.getString(R.string.file_deleted, fsrc.getAbsolutePath()));
+    }
+    log.waitForIt();
   }
 
 }

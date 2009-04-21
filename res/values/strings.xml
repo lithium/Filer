@@ -48,6 +48,8 @@
 
     <string name="moving_files">Moving files...</string>
     <string name="copying_files">Copying files...</string>
+    <string name="copying_file">Copying file %s...</string>
+    <string name="deleting_files">Deleting files...</string>
 
     <string name="dialog_mkdir_title">Make new directory</string>
     <string name="dialog_mkdir_splash">Name of the new directory</string>
@@ -57,8 +59,10 @@
     <string name="dialog_rename_title">Rename file</string>
     <string name="dialog_rename_splash">New name of the file</string>
     <string name="file_renamed">%s renamed to %s</string>
+    <string name="file_deleted">%s deleted</string>
 
     <string name="file_exists">%s: file already exists</string>
     <string name="file_not_found">%s: file not found</string>
+    <string name="directory_not_empty">%s: directory not empty</string>
 
 </resources>
