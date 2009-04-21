@@ -46,4 +46,6 @@
     <string name="dialog_move_buffer_title">Move Selected Files?</string>
     <string name="dialog_delete_buffer_title">Delete Selected Files?</string>
 
+    <string name="moving_files">Moving files...</string>
+
 </resources>

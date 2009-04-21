@@ -36,7 +36,7 @@ public class FilerActivity extends ListActivity
   static private final int REQUEST_PREFERENCES=1;
 
   private File mRootFile,mCurDir,mStartFile;
-  private boolean mBrowseRoot,mHideDot,mCreatingShortcut;
+  private boolean mBrowseRoot,mHideDot,mRecursiveDelete,mCreatingShortcut;
   private String mRootPath,mHomePath;
   private ArrayList<String> mCurFiles;
   private FileListAdapter mFileAdapter;
@@ -116,6 +116,20 @@ public class FilerActivity extends ListActivity
     }
   };
 
+  private void load_preferences()
+  {
+    if (mPrefs == null) mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+    mBrowseRoot = mPrefs.getBoolean(Filer.PREF_BROWSE_ROOT, true);
+    mRootPath = mBrowseRoot ? "/" : Environment.getExternalStorageDirectory().toString();
+    mHideDot = mPrefs.getBoolean(Filer.PREF_HIDE_DOT, true);
+    mHomePath = mPrefs.getString(Filer.PREF_HOME_PATH, "");
+    
+    if (mHomePath == null || mHomePath.length() < 1) 
+      mHomePath = Environment.getExternalStorageDirectory().toString();
+
+    mRecursiveDelete = mPrefs.getBoolean(Filer.PREF_RECURSIVE_DELETE, true);
+  }
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
@@ -150,66 +164,7 @@ public class FilerActivity extends ListActivity
       t.show();
     }
 
-    /* set up yank bar buttons */
-    View buffer = findViewById(R.id.yank_bar_buffer);
-    buffer.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_yank_buffer_title) 
-          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
-          })
-          .setNeutralButton(R.string.unyank_all, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) { 
-              unyank_all(); 
-              dialog.dismiss();
-            }
-          })
-          .create()
-          .show();
-      }
-    });
-    View copy = findViewById(R.id.yank_bar_copy);
-    copy.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_copy_buffer_title) 
-          .setPositiveButton(R.string.copy_here, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) { 
-              copy_yank_buffer_here();
-              dialog.dismiss();
-            }
-          })
-          .create()
-          .show();
-      }
-    });
-    View move = findViewById(R.id.yank_bar_move);
-    move.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_move_buffer_title) 
-          .setPositiveButton(R.string.move_here, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) { 
-              move_yank_buffer_here();
-              dialog.dismiss();
-            }
-          })
-          .create()
-          .show();
-      }
-    });
-    View rm = findViewById(R.id.yank_bar_delete);
-    rm.setOnClickListener(new View.OnClickListener() {
-      public void onClick(View v) { 
-        build_yank_buffer_dialog(R.string.dialog_delete_buffer_title) 
-          .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) { 
-              delete_yank_buffer();
-              dialog.dismiss();
-            }
-          })
-          .create()
-          .show();
-      }
-    });
+    init_yankbar();
 
 
     registerForContextMenu(getListView());
@@ -449,18 +404,6 @@ public class FilerActivity extends ListActivity
 
 
 
-  private void load_preferences()
-  {
-    if (mPrefs == null) mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-    mBrowseRoot = mPrefs.getBoolean(Filer.PREF_BROWSE_ROOT, true);
-    mRootPath = mBrowseRoot ? "/" : Environment.getExternalStorageDirectory().toString();
-    mHideDot = mPrefs.getBoolean(Filer.PREF_HIDE_DOT, true);
-    mHomePath = mPrefs.getString(Filer.PREF_HOME_PATH, "");
-    
-    if (mHomePath == null || mHomePath.length() < 1) 
-      mHomePath = Environment.getExternalStorageDirectory().toString();
-  }
   private void yank_file(String filename) {
     File f = new File(mCurDir, filename);
     String path = f.getAbsolutePath();
@@ -541,8 +484,66 @@ public class FilerActivity extends ListActivity
     return builder;
   }
 
-  private void copy_yank_buffer_here() { }
-  private void move_yank_buffer_here() { }
-  private void delete_yank_buffer() { }
-
+  private void init_yankbar() 
+  {
+    View buffer = findViewById(R.id.yank_bar_buffer);
+    buffer.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_yank_buffer_title) 
+          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { dialog.dismiss(); }
+          })
+          .setNeutralButton(R.string.unyank_all, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              unyank_all(); 
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+    View copy = findViewById(R.id.yank_bar_copy);
+    copy.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_copy_buffer_title) 
+          .setPositiveButton(R.string.copy_here, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              FileSystem.copy(mYanked.toArray(), mCurDir, this);
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+    View move = findViewById(R.id.yank_bar_move);
+    move.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_move_buffer_title) 
+          .setPositiveButton(R.string.move_here, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              FileSystem.move(mYanked, mCurDir, this);
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+    View rm = findViewById(R.id.yank_bar_delete);
+    rm.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) { 
+        build_yank_buffer_dialog(R.string.dialog_delete_buffer_title) 
+          .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { 
+              FileSystem.delete(mYanked, mRecursiveDelete, this);
+              dialog.dismiss();
+            }
+          })
+          .create()
+          .show();
+      }
+    });
+  }
 }
