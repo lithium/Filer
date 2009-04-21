@@ -31,6 +31,57 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Stack;
 
+
+import android.widget.EditText;
+
+class AlertInput {
+  private AlertDialog mDialog;
+  private OnCompleteListener mListener;
+  private EditText mText;
+
+  public interface OnCompleteListener {
+    public void onComplete(String value);
+    public void onCancel();
+  };
+
+  public AlertInput(Context context, int title_res, String splash, String default_value)
+  {
+    LayoutInflater li = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    View layout = li.inflate(R.layout.alertinput, null);
+
+    TextView tv = (TextView)layout.findViewById(android.R.id.text1);
+    tv.setText(splash);
+
+    mText = (EditText)layout.findViewById(android.R.id.text2);
+    mText.setHint(default_value);
+
+    mDialog = new AlertDialog.Builder(context)
+      .setTitle(title_res)
+      .setView(layout)
+      .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) { 
+          if (mListener != null) {
+            mListener.onComplete(mText.getText().toString());
+          }
+          dialog.dismiss();
+        }
+      })
+      .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) { 
+          if (mListener != null) {
+            mListener.onCancel();
+          }
+          dialog.dismiss(); 
+        }
+      })
+      .show();
+  }
+  public void setOnCompleteListener(OnCompleteListener listener) { mListener = listener; }
+}
+
+
+
+
 public class FilerActivity extends ListActivity
 {
   static private final int REQUEST_PREFERENCES=1;
@@ -283,9 +334,11 @@ public class FilerActivity extends ListActivity
   public boolean onContextItemSelected(MenuItem item)
   {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-    String filename = mCurFiles.get(info.position);
+    final String filename = mCurFiles.get(info.position);
 
     switch (item.getItemId()) {
+      case R.id.context_menu_open:
+        return true;
       case R.id.context_menu_yank:
         yank_file(filename);
         info.targetView.setBackgroundResource(R.drawable.yanked);
@@ -294,9 +347,30 @@ public class FilerActivity extends ListActivity
         unyank_file(filename);
         info.targetView.setBackgroundResource(R.drawable.unyanked);
         return true;
-      case R.id.context_menu_open:
-        return true;
       case R.id.context_menu_rename:
+        AlertInput ai = new AlertInput(this, R.string.dialog_rename_title, getString(R.string.dialog_rename_splash, filename), filename);
+        ai.setOnCompleteListener(new AlertInput.OnCompleteListener() {
+          public void onCancel() {}
+          public void onComplete(String value) {
+            File f = new File(mCurDir, filename);
+            File fnew = new File(mCurDir, value);
+            String msg;
+            if (!f.exists()) {
+              msg = getString(R.string.file_not_found, filename);
+            }
+            else if (fnew.exists()) {
+              msg = getString(R.string.file_exists, value);
+            }
+            else {
+              msg = getString(R.string.file_renamed, filename, value);
+              f.renameTo(fnew);
+            }
+            fillData(mCurDir);
+
+            Toast t = Toast.makeText(FilerActivity.this, msg, Toast.LENGTH_LONG);
+            t.show();
+          }
+        });
         return true;
       case R.id.context_menu_delete:
         return true;
@@ -340,6 +414,25 @@ public class FilerActivity extends ListActivity
         unyank_all();
         return true;
       case R.id.options_menu_mkdir:
+        AlertInput ai = new AlertInput(this, R.string.dialog_mkdir_title, getString(R.string.dialog_mkdir_splash), getString(R.string.dialog_mkdir_hint));
+        ai.setOnCompleteListener(new AlertInput.OnCompleteListener() {
+          public void onComplete(String value) {
+            File f = new File(mCurDir, value);
+            String msg;
+            if (f.exists()) {
+              msg = getString(R.string.file_exists, value);
+            }
+            else {
+              f.mkdir();
+              msg = getString(R.string.directory_created, value);
+            }
+            fillData(mCurDir);
+
+            Toast t = Toast.makeText(FilerActivity.this, msg, Toast.LENGTH_LONG);
+            t.show();
+          }
+          public void onCancel() {} 
+        });
         return true;
       case R.id.options_menu_prefs:
         startActivityForResult( new Intent(this, FilerPreferencesActivity.class), REQUEST_PREFERENCES );
@@ -495,8 +588,8 @@ public class FilerActivity extends ListActivity
           })
           .setNeutralButton(R.string.unyank_all, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              unyank_all(); 
               dialog.dismiss();
+              unyank_all(); 
             }
           })
           .create()
@@ -509,8 +602,9 @@ public class FilerActivity extends ListActivity
         build_yank_buffer_dialog(R.string.dialog_copy_buffer_title) 
           .setPositiveButton(R.string.copy_here, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.copy(mYanked.toArray(), mCurDir, this);
+              FileSystem.copy(mYanked.toArray(new String[0]), mCurDir, FilerActivity.this);
               dialog.dismiss();
+              unyank_all();
             }
           })
           .create()
@@ -523,11 +617,11 @@ public class FilerActivity extends ListActivity
         build_yank_buffer_dialog(R.string.dialog_move_buffer_title) 
           .setPositiveButton(R.string.move_here, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.move(mYanked, mCurDir, this);
+              FileSystem.move(mYanked.toArray(new String[0]), mCurDir, FilerActivity.this);
               dialog.dismiss();
+              unyank_all();
             }
           })
-          .create()
           .show();
       }
     });
@@ -537,8 +631,9 @@ public class FilerActivity extends ListActivity
         build_yank_buffer_dialog(R.string.dialog_delete_buffer_title) 
           .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.delete(mYanked, mRecursiveDelete, this);
+              FileSystem.delete(mYanked.toArray(new String[0]), mRecursiveDelete, FilerActivity.this);
               dialog.dismiss();
+              unyank_all();
             }
           })
           .create()

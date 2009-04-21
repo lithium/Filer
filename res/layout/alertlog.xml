@@ -12,7 +12,8 @@
     <TextView android:id="@android:id/text1"
       android:layout_height="wrap_content"
       android:layout_width="fill_parent"
-      android:gravity="center"
+      android:gravity="left"
+      android:textSize="10sp"
       />
   </ScrollView>
   <Button android:id="@android:id/button1"
