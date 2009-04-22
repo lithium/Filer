@@ -24,7 +24,7 @@
   </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_cat_mime">
-    <Preference 
+    <Preference android:key="mime_types"
       android:title="@string/pref_mime"
       android:summary="@string/pref_mime_summary"
     />

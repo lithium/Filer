@@ -44,6 +44,22 @@ public class MimeProvider extends ContentProvider {
         "_id INTEGER PRIMARY KEY);");
 
       //insert defaults;
+      //text/html.html,text/html.htm,text/*.txt,image/*.png,image/*.gif,image/*.jpg,image/*.bmp,video/*.mpg,video/*.wmv,video/*.mov,video/*.avi,audio/*.wav,audio/*.mp3,audio/*.wma,audio/*.ogg
+
+      String query = "INSERT INTO "+ Filer.MimeColumns.TABLE_NAME + 
+                       "(extension, mimetype, icon, action) VALUES ";
+      db.execSQL(query+"('.html','text/html','_id:"+R.drawable.mimetype_html+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.htm','text/html', '_id:"+R.drawable.mimetype_html+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.txt','text/*',    '_id:"+R.drawable.mimetype_mime_txt+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.mpg','video/*',   '_id:"+R.drawable.mimetype_video+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.wmv','video/*',   '_id:"+R.drawable.mimetype_video+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.mov','video/*',   '_id:"+R.drawable.mimetype_quicktime+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.avi','video/*',   '_id:"+R.drawable.mimetype_video+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.wav','audio/*',   '_id:"+R.drawable.mimetype_sound+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.mp3','audio/*',   '_id:"+R.drawable.mimetype_sound+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.wma','audio/*',   '_id:"+R.drawable.mimetype_sound+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.ogg','audio/*',   '_id:"+R.drawable.mimetype_sound+"','android.intent.action.VIEW');");
+      db.execSQL(query+"('.amr','audio/*',   '_id:"+R.drawable.mimetype_sound+"','android.intent.action.VIEW');");
     }
 
     @Override
