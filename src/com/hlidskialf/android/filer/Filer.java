@@ -11,6 +11,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContentValues;
 import android.content.ContentUris;
+import android.database.Cursor;
+import android.widget.ImageView;
 
 
 public class Filer 
@@ -70,6 +72,10 @@ public class Filer
   }
 
 
+  public synchronized static Cursor getMimeCursor(Context context)
+  {
+    return context.getContentResolver().query(MimeColumns.CONTENT_URI, MimeColumns.MIME_QUERY_COLUMNS, null, null, MimeColumns.DEFAULT_SORT_ORDER);
+  }
   public synchronized static Uri insertMimetype(Context context, String ext, String mime, String icon, String action)
   {
     ContentValues values = new ContentValues(5);
@@ -98,5 +104,21 @@ public class Filer
   {
     ContentResolver resolver = context.getContentResolver();
     resolver.delete(ContentUris.withAppendedId(MimeColumns.CONTENT_URI, id), "", null);
+  }
+
+
+  public static boolean setImageFromUri(ImageView iv, Uri uri)
+  {
+    if (iv == null || uri == null) return false;
+    String scheme = uri.getScheme();
+    if (scheme == null) return false;
+    if (scheme.equals("drawable")) {
+      int id = iv.getContext().getResources().getIdentifier(uri.getLastPathSegment(), uri.getScheme(), uri.getAuthority());
+      iv.setImageResource(id);
+    }
+    else {
+      iv.setImageURI(uri);
+    }
+    return true;
   }
 }

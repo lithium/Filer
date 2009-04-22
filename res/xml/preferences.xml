@@ -24,9 +24,10 @@
   </PreferenceCategory>
 
   <PreferenceCategory android:title="@string/pref_cat_mime">
-    <Preference android:key="mime_types"
+    <com.hlidskialf.android.filer.MimePreference android:key="mime_types"
       android:title="@string/pref_mime"
       android:summary="@string/pref_mime_summary"
+      android:dialogLayout="@layout/mime_preference"
     />
   </PreferenceCategory>
 

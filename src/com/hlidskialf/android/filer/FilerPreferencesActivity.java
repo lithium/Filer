@@ -13,6 +13,7 @@ public class FilerPreferencesActivity extends PreferenceActivity {
 
     addPreferencesFromResource(R.xml.preferences);
   }
+  /*
   @Override
   public boolean onPreferenceTreeClick(PreferenceScreen screen, Preference preference)
   {
@@ -23,5 +24,6 @@ public class FilerPreferencesActivity extends PreferenceActivity {
     }
     return super.onPreferenceTreeClick(screen,preference);
   }
+  */
   
 }
