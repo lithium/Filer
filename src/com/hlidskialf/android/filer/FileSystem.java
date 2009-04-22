@@ -20,47 +20,82 @@ import java.io.FileOutputStream;
 
 public class FileSystem
 {
-  public static void copy(Context context, String[] src, File dest)
+  public static void copy(Context _context, AlertLog _log, String[] _src, File _dest)
   {
-  /*
-    AlertLog log = new AlertLog(context, R.string.copying_files);
+    final Context context = _context;
+    final AlertLog log = _log; 
+    final String[] src = _src;
+    final File dest = _dest;
+
     if (!(dest.exists() && dest.isDirectory())) 
       return;
-    int i;
-    for (i=0; i < src.length; i++) {
-      File fsrc = new File(src[i]);
-      if (!fsrc.exists()) {
-        log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
-        continue;
+
+    Thread thread = new Thread() {
+      public void run() {
+        int i;
+        for (i=0; i < src.length; i++) {
+          File fsrc = new File(src[i]);
+          if (!fsrc.exists()) {
+            log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
+            continue;
+          }
+          File fnew = new File(dest, fsrc.getName());
+          if (fnew.exists()) {
+            log.appendln(context.getString(R.string.file_exists, fnew.getAbsolutePath()));
+            continue; 
+          }
+          try {
+            file_deepcopy(context, log, fsrc, fnew);
+          } catch (java.io.IOException ex) {
+          }
+        }
+        log.waitForIt();
       }
-      File fnew = new File(dest, fsrc.getName());
-      if (fnew.exists()) {
-        log.appendln(context.getString(R.string.file_exists, fnew.getAbsolutePath()));
-        continue; 
-      }
-      try {
-        log.appendln(fsrc.getAbsolutePath() + " -> " + fnew.getAbsolutePath());
-        file_deepcopy(context, fsrc, fnew);
-      } catch (java.io.IOException ex) {
-      }
-    }
-    log.waitForIt();
-    */
+    };
+    thread.start();
   }
-  private static void file_deepcopy(Context context, File src, File dest) throws java.io.IOException {
+  private static void file_deepcopy(Context context, AlertLog log, File src, File dest) 
+    throws java.io.IOException 
+  {
     if (src.isDirectory()) {
       if (!dest.exists())
         dest.mkdirs();
       String ls[] = src.list();
       int i;
       for (i = 0; i < ls.length; i++) {
-        file_deepcopy(context, new File(src, ls[i]), new File(dest, ls[i]));
+        file_deepcopy(context, log, new File(src, ls[i]), new File(dest, ls[i]));
       }
     }
     else {
-      file_copy(context, src, dest);
+      file_copy(context, log, src, dest);
     }
   }
+  private static void file_copy(Context context, AlertLog log, File src, File dest) 
+    throws java.io.IOException 
+  {
+    FileInputStream in = new FileInputStream(src);
+    FileOutputStream out = new FileOutputStream(dest);
+    byte[] buf = new byte[1024];
+    int len,red=0;
+    int i=0;
+
+    String msg = context.getString(R.string.copying_file, src.getAbsolutePath(), dest.getAbsolutePath());
+    log.appendln(msg);
+
+    log.progress_start(context.getString(R.string.copy_here), msg, (int)src.length());
+
+    while ((len = in.read(buf)) > 0) {
+      red += len;
+      out.write(buf, 0, len);
+      if (++i % 5 == 0)
+        log.progress_update(red);
+    }
+    in.close();
+    out.close();
+    log.progress_finish();
+  }
+
+  /*
   private static void file_copy(Context context, File src, File dest) throws java.io.IOException {
     final FileInputStream in = new FileInputStream(src);
     final FileOutputStream out = new FileOutputStream(dest);
@@ -108,26 +143,37 @@ public class FileSystem
   
 
   /* move */
-  public static void move(Context context, AlertLog log, String[] src, File dest)
+  public static void move(Context _context, AlertLog _log, String[] _src, File _dest)
   {
+    final Context context = _context;
+    final AlertLog log = _log; 
+    final String[] src = _src;
+    final File dest = _dest;
+
     if (!(dest.exists() && dest.isDirectory())) 
       return;
-    int i;
-    for (i=0; i < src.length; i++) {
-      File fsrc = new File(src[i]);
-      if (!fsrc.exists()) {
-        log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
-        continue;
+
+    Thread thread = new Thread() {
+      public void run() {
+        int i;
+        for (i=0; i < src.length; i++) {
+          File fsrc = new File(src[i]);
+          if (!fsrc.exists()) {
+            log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
+            continue;
+          }
+          File fnew = new File(dest, fsrc.getName());
+          if (fnew.exists()) {
+            log.appendln(context.getString(R.string.file_exists, fnew.getAbsolutePath()));
+            continue; 
+          }
+          log.appendln(fsrc.getAbsolutePath() + " -> " + fnew.getAbsolutePath());
+          fsrc.renameTo(fnew);
+        }
+        log.waitForIt();
       }
-      File fnew = new File(dest, fsrc.getName());
-      if (fnew.exists()) {
-        log.appendln(context.getString(R.string.file_exists, fnew.getAbsolutePath()));
-        continue; 
-      }
-      log.appendln(fsrc.getAbsolutePath() + " -> " + fnew.getAbsolutePath());
-      fsrc.renameTo(fnew);
-    }
-    log.waitForIt();
+    };
+    thread.start();
   }
 
 

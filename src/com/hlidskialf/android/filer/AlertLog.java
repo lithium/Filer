@@ -2,8 +2,9 @@ package com.hlidskialf.android.filer;
 
 import android.os.Handler;
 import android.os.Message;
+import android.os.Bundle;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.widget.TextView;
 import android.view.LayoutInflater;
@@ -17,10 +18,14 @@ public class AlertLog extends Handler {
   private TextView mText = null;
   private DoneListener mDoneListener;
   private ScrollView mScroll = null;
+  private ProgressDialog mProgress = null;
 
   private static final int MSG_DISMISS=0;
   private static final int MSG_APPEND=1;
   private static final int MSG_WAITFORIT=2;
+  private static final int MSG_PROGRESS_START=20;
+  private static final int MSG_PROGRESS_UPDATE=21;
+  private static final int MSG_PROGRESS_FINISH=22;
 
   public interface DoneListener {
     public void done();
@@ -37,6 +42,9 @@ public class AlertLog extends Handler {
       .show();
     mText = (TextView)mDialog.findViewById(android.R.id.text1);
     mScroll = (ScrollView)mDialog.findViewById(android.R.id.list);
+
+    mProgress = new ProgressDialog(context);
+    mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
   }
   public void setDoneListener(DoneListener listener) {
     mDoneListener = listener;
@@ -61,6 +69,29 @@ public class AlertLog extends Handler {
     sendMessage(msg);
   }
 
+  public void progress_start(String title, String message, int max) { 
+    Message msg = Message.obtain();
+    msg.what = MSG_PROGRESS_START;
+    Bundle b = new Bundle();
+    b.putString("title", title);
+    b.putString("message", message);
+    b.putInt("max", max);
+    msg.obj = b;
+    sendMessage(msg);
+  }
+  public void progress_update(int progress) { 
+    Message msg = Message.obtain();
+    msg.what = MSG_PROGRESS_UPDATE;
+    msg.obj = new Integer(progress);
+    sendMessage(msg);
+  }
+  public void progress_finish() { 
+    Message msg = Message.obtain();
+    msg.what = MSG_PROGRESS_FINISH;
+    sendMessage(msg);
+  }
+
+
   @Override
   public void handleMessage(Message msg) {
     switch (msg.what) {
@@ -81,6 +112,20 @@ public class AlertLog extends Handler {
         });
         break;
       }
+      case MSG_PROGRESS_START: {
+        Bundle b = (Bundle)msg.obj;
+        mProgress.setTitle( b.getString("title") );
+        mProgress.setMessage( b.getString("message") );
+        mProgress.setMax( b.getInt("max") );
+        mProgress.show();
+        break;
+      }
+      case MSG_PROGRESS_UPDATE:
+        mProgress.setProgress((Integer)msg.obj);
+        break;
+      case MSG_PROGRESS_FINISH:
+        mProgress.hide();
+        break;
     }
   }
 }

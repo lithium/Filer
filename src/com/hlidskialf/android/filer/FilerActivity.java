@@ -623,9 +623,15 @@ public class FilerActivity extends ListActivity
         build_yank_buffer_dialog(R.string.dialog_copy_buffer_title, null) 
           .setPositiveButton(R.string.copy_here, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) { 
-              FileSystem.copy(FilerActivity.this, mYanked.toArray(new String[0]), mCurDir);
-              dialog.dismiss();
-              unyank_all();
+              final DialogInterface dia = dialog;
+              AlertLog log = new AlertLog(FilerActivity.this, R.string.copying_files);
+              log.setDoneListener(new AlertLog.DoneListener() {
+                public void done() {
+                  dia.dismiss();
+                  unyank_all();
+                }
+              });
+              FileSystem.copy(FilerActivity.this, log, mYanked.toArray(new String[0]), mCurDir);
             }
           })
           .show();
