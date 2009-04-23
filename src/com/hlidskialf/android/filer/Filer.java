@@ -100,6 +100,7 @@ public class Filer
 
   public synchronized static String getIconFromExtension(Context context, String extension)
   {
+    if (extension == null) return null;
     Cursor cursor = context.getContentResolver().query(MimeColumns.CONTENT_URI, 
         new String[] { MimeColumns.ICON }, 
         MimeColumns.EXTENSION+"=?", new String[] {extension},
@@ -113,15 +114,16 @@ public class Filer
   }
   public synchronized static Intent getIntentFromFile(Context context, File file)
   {
+    Intent ret = new Intent();
+    String type = "text/*";
+    String action = Intent.ACTION_VIEW;
     String extension = Filer.getExtension(file.getName());
+    if (extension == null) return ret;
 
     Cursor cursor = context.getContentResolver().query(MimeColumns.CONTENT_URI, 
         new String[] { MimeColumns.MIMETYPE, MimeColumns.ACTION }, 
         MimeColumns.EXTENSION+"=?", new String[] {extension},
         null);
-    Intent ret = new Intent();
-    String type = "text/*";
-    String action = Intent.ACTION_VIEW;
     if (cursor.moveToFirst()) {
       type = cursor.getString(0);
       action = cursor.getString(1);
@@ -185,6 +187,6 @@ public class Filer
   public static String getExtension(String s)
   {
     int idx = s.lastIndexOf('.');
-    return s.substring(idx);
+    return idx == -1 ? null : s.substring(idx);
   }
 }

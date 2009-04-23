@@ -163,7 +163,7 @@ public class FilerActivity extends ListActivity
         if (mime != null) {
           String ext = Filer.getExtension(filename);
           String icon_url = Filer.getIconFromExtension(FilerActivity.this, ext);
-          if (icon_url == null || !Filer.setImageFromUri(mime, Uri.parse(icon_url)))
+          if (ext == null || icon_url == null || !Filer.setImageFromUri(mime, Uri.parse(icon_url)))
             mime.setImageResource(R.drawable.mimetype_ascii);
         }
         if (size != null) size.setText( Filer.format_size(f.length()) );

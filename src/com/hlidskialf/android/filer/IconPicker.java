@@ -33,6 +33,7 @@ public class IconPicker extends Dialog
     "drawable://com.hlidskialf.android.filer/mimetype_quicktime",
     "drawable://com.hlidskialf.android.filer/mimetype_sound",
     "drawable://com.hlidskialf.android.filer/mimetype_spreadsheet",
+    "drawable://com.hlidskialf.android.filer/mimetype_soffice",
     "drawable://com.hlidskialf.android.filer/mimetype_tar",
     "drawable://com.hlidskialf.android.filer/mimetype_txt",
     "drawable://com.hlidskialf.android.filer/mimetype_vcalendar",
