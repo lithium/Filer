@@ -290,13 +290,13 @@ public class FilerActivity extends ListActivity
       mIgnoreNextClick = false;
       return;
     }
+    String filename = mCurFiles.get(pos);
 
     super.onListItemClick(lv,v,pos,itemid);
-    if (pos == 0) { // cd ..
+    if (filename.equals("..")) { // cd ..
       fillData(mCurDir.getParentFile());
       return;
     }
-    String filename = mCurFiles.get(pos);
     File f = new File(mCurDir, filename);
     if (f.isDirectory()) {
       fillData(f);
