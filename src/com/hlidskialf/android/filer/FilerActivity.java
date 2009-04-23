@@ -135,6 +135,9 @@ public class FilerActivity extends ListActivity
         LayoutInflater li = getLayoutInflater();
         v = li.inflate(R.layout.file_list_item, parent, false); 
       }
+      if (pos >= mCurFiles.size()) return v; // Only monkey seems to trigger this
+
+
       String filename = mCurFiles.get(pos);
       File f = new File(mCurDir, filename);
 
