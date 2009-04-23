@@ -54,7 +54,7 @@ public class Filer
   public static class MimeColumns implements BaseColumns {
     public static final Uri CONTENT_URI = Uri.parse("content://com.hlidskialf.android.filer/mimetype");
     public static final String _ID = "_id";
-    public static final String DEFAULT_SORT_ORDER = "_id ASC";
+    public static final String DEFAULT_SORT_ORDER = "mimetype ASC";
     public static final String TABLE_NAME = "mimetypes";
 
     public static final String EXTENSION="extension";
@@ -72,6 +72,29 @@ public class Filer
   }
 
 
+  public interface MimetypeReporter {
+    public void reportMime(int id, String ext, String mimetype, String icon, String action);
+  }
+  public synchronized static void getMimetypes(MimetypeReporter reporter, Cursor cur) 
+  {
+    if (!cur.moveToFirst()) return;
+    do {
+      int id = cur.getInt(MimeColumns.MIME_ID_INDEX);
+      String ext = cur.getString(MimeColumns.MIME_EXTENSION_INDEX);
+      String mime = cur.getString(MimeColumns.MIME_MIMETYPE_INDEX);
+      String icon = cur.getString(MimeColumns.MIME_ICON_INDEX);
+      String action = cur.getString(MimeColumns.MIME_ACTION_INDEX);
+      reporter.reportMime(id, ext, mime, icon, action);
+    } while (cur.moveToNext());
+  }
+  public synchronized static void getMimetype(Context context, int mime_id, MimetypeReporter reporter)
+  {
+    Cursor cursor = context.getContentResolver().query(
+        ContentUris.withAppendedId(MimeColumns.CONTENT_URI, mime_id), 
+        MimeColumns.MIME_QUERY_COLUMNS, null, null, MimeColumns.DEFAULT_SORT_ORDER);
+    Filer.getMimetypes(reporter, cursor);
+    cursor.close();
+  }
   public synchronized static Cursor getMimeCursor(Context context)
   {
     return context.getContentResolver().query(MimeColumns.CONTENT_URI, MimeColumns.MIME_QUERY_COLUMNS, null, null, MimeColumns.DEFAULT_SORT_ORDER);

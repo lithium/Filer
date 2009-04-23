@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+    <TableRow
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      >
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/icon"
+        />
+      <ImageButton android:id="@+id/edit_mime_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:src="@drawable/mimetype_binary"
+        />
+    </TableRow>
+
+    <TableRow
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      >
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/extension"
+        />
+      <EditText android:id="@+id/edit_mime_ext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="*"
+        />
+    </TableRow>
+
+    <TableRow
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      >
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mimetype"
+        />
+      <EditText android:id="@+id/edit_mime_mimetype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="text/*"
+        />
+    </TableRow>
+
+
+    <TableRow
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      >
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action"
+        />
+      <Spinner android:id="@+id/edit_mime_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    </TableRow>
+</TableLayout>

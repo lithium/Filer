@@ -9,6 +9,12 @@
     <string name="no_storage">No storage found.</string>
     <string name="toast_shortcut_hint">Longclick to create a shortcut</string>
 
+    <!-- nouns -->
+    <string name="icon">Icon</string>
+    <string name="extension">Extension</string>
+    <string name="mimetype">Mime-type</string>
+    <string name="action">Action</string>
+    
 
     <!-- actions -->
     <string name="yank_buffer">Show files</string>
@@ -24,6 +30,10 @@
     <string name="preferences">Preferences</string>
     <string name="help">Help</string>
     <string name="delete_all">Delete all</string>
+    <string name="sort_by">Sort by</string>
+    <string name="new_mime">Add New Type</string>
+    <string name="edit_mime">Edit Type</string>
+    <string name="choose_icon">Choose an icon</string>
 
     <!-- preferences -->
     <string name="pref_cat_filer">Filer Preferences</string>

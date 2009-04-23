@@ -1,0 +1,10 @@
+<resources>
+  <string-array name="actions">
+    <item>ACTION_VIEW</item>
+    <item>ACTION_EDIT</item>
+    <item>ACTION_MAIN</item>
+    <item>ACTION_RUN</item>
+    <item>ACTION_SEND</item>
+    <item>ACTION_SENDTO</item>
+  </string-array>
+</resources>
