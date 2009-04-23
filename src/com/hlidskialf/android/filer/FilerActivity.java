@@ -85,6 +85,7 @@ class AlertInput {
 public class FilerActivity extends ListActivity
 {
   static private final int REQUEST_PREFERENCES=1;
+  static private final int REQUEST_FILE_INTENT=2;
 
   private File mRootFile,mCurDir,mStartFile;
   private boolean mBrowseRoot,mHideDot,mRecursiveDelete,mCreatingShortcut;
@@ -157,8 +158,14 @@ public class FilerActivity extends ListActivity
         if (mtime != null) mtime.setText( "" );
       }
       else { // regular file
+
         if (icon != null) icon.setImageResource(0);
-        if (mime != null) mime.setImageResource(R.drawable.mimetype_ascii);
+        if (mime != null) {
+          String ext = Filer.getExtension(filename);
+          String icon_url = Filer.getIconFromExtension(FilerActivity.this, ext);
+          if (icon_url == null || !Filer.setImageFromUri(mime, Uri.parse(icon_url)))
+            mime.setImageResource(R.drawable.mimetype_ascii);
+        }
         if (size != null) size.setText( Filer.format_size(f.length()) );
         if (mtime != null) mtime.setText( Filer.format_date(f.lastModified()) );
       }
@@ -298,7 +305,13 @@ public class FilerActivity extends ListActivity
       return;
     }
 
-    //TODO start intent based on mimetype
+    try {
+      Intent intent = Filer.getIntentFromFile(this, f);
+      startActivityForResult(intent,REQUEST_FILE_INTENT);
+    } catch (android.content.ActivityNotFoundException ex) {
+      Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
+      t.show();
+    }
   }
   @Override 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)

@@ -69,6 +69,8 @@
     <string name="dialog_rename_title">Rename file</string>
     <string name="dialog_rename_splash">New name of the file</string>
    
+    <string name="activity_not_found">No activity found</string>
+
     <!-- messages -->
     <string name="directory_created">%s: directory created</string>
     <string name="file_renamed">%s renamed to %s</string>

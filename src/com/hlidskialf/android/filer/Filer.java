@@ -3,10 +3,12 @@ package com.hlidskialf.android.filer;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.Date;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.text.DecimalFormat;
 import android.provider.BaseColumns;
 import android.net.Uri;
+import android.content.Intent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContentValues;
@@ -95,6 +97,41 @@ public class Filer
     Filer.getMimetypes(reporter, cursor);
     cursor.close();
   }
+
+  public synchronized static String getIconFromExtension(Context context, String extension)
+  {
+    Cursor cursor = context.getContentResolver().query(MimeColumns.CONTENT_URI, 
+        new String[] { MimeColumns.ICON }, 
+        MimeColumns.EXTENSION+"=?", new String[] {extension},
+        null);
+    String ret = null;
+    if (cursor.moveToFirst()) {
+      ret = cursor.getString(0);
+    }
+    cursor.close();
+    return ret;
+  }
+  public synchronized static Intent getIntentFromFile(Context context, File file)
+  {
+    String extension = Filer.getExtension(file.getName());
+
+    Cursor cursor = context.getContentResolver().query(MimeColumns.CONTENT_URI, 
+        new String[] { MimeColumns.MIMETYPE, MimeColumns.ACTION }, 
+        MimeColumns.EXTENSION+"=?", new String[] {extension},
+        null);
+    Intent ret = new Intent();
+    String type = "text/*";
+    String action = Intent.ACTION_VIEW;
+    if (cursor.moveToFirst()) {
+      type = cursor.getString(0);
+      action = cursor.getString(1);
+    }
+    ret.setDataAndType(Uri.fromFile(file), type);
+    ret.setAction(action);
+    cursor.close();
+    return ret;
+  }
+
   public synchronized static Cursor getMimeCursor(Context context)
   {
     return context.getContentResolver().query(MimeColumns.CONTENT_URI, MimeColumns.MIME_QUERY_COLUMNS, null, null, MimeColumns.DEFAULT_SORT_ORDER);
@@ -143,5 +180,11 @@ public class Filer
       iv.setImageURI(uri);
     }
     return true;
+  }
+
+  public static String getExtension(String s)
+  {
+    int idx = s.lastIndexOf('.');
+    return s.substring(idx);
   }
 }

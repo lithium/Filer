@@ -17,11 +17,15 @@ import android.text.Editable;
 import android.text.TextWatcher;
 
 import android.widget.ArrayAdapter;
+import java.util.Arrays;
+import java.util.List;
 
 public class EditMimeDialog
 {
   private Context mContext;
   private AlertDialog mDialog;
+
+  private List<String> mActionStrings;
 
   private ImageButton mImageButton;
   private Spinner mSpinner;
@@ -44,8 +48,11 @@ public class EditMimeDialog
     LayoutInflater mFactory = LayoutInflater.from(mContext);
     View v = mFactory.inflate(R.layout.edit_mime, null);
 
+
+    mActionStrings = Arrays.asList(context.getResources().getStringArray(R.array.actions));
+
     mSpinner = (Spinner)v.findViewById(R.id.edit_mime_action);
-    mSpinAdapter = ArrayAdapter.createFromResource(context, R.array.actions, android.R.layout.simple_spinner_item);
+    mSpinAdapter = new ArrayAdapter(context, android.R.layout.simple_spinner_item, mActionStrings);
     mSpinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     mSpinner.setAdapter(mSpinAdapter);
 
@@ -116,6 +123,8 @@ public class EditMimeDialog
   public void setAction(String new_action)
   {
     mAction = new_action;
+    int idx = mActionStrings.indexOf(new_action.replaceFirst("android.intent.action.","ACTION_"));
+    mSpinner.setSelection(idx, false);
   }
   public void setIcon(String new_url)
   {
