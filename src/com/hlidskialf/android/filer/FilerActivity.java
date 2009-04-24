@@ -304,7 +304,7 @@ public class FilerActivity extends ListActivity
     }
 
     if (mCreatingShortcut) {
-      //TODO create_shortcut(f);
+      create_shortcut(f);
       return;
     }
 
@@ -329,7 +329,7 @@ public class FilerActivity extends ListActivity
     }
 
     if (mCreatingShortcut) {
-      //TODO //create_shortcut();
+      create_shortcut(new File(mCurDir, filename));
       return;
     }
 
@@ -691,6 +691,22 @@ public class FilerActivity extends ListActivity
             }
           })
           .show();
+      }
+    });
+  }
+
+
+  public void create_shortcut(File f)
+  {
+    final Intent short_intent = Filer.shortcutIntent(this, f);
+    AlertInput ai = new AlertInput(this, R.string.create_shortcut_title, getString(R.string.create_shortcut_splash), f.getName());
+    ai.setOnCompleteListener(new AlertInput.OnCompleteListener() {
+      public void onCancel() {}
+      public void onComplete(String value) {
+        if (value.length() > 0)
+          short_intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, value);
+        FilerActivity.this.setResult(RESULT_OK, short_intent);
+        FilerActivity.this.finish();
       }
     });
   }

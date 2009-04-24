@@ -117,20 +117,27 @@ public class Filer
     Intent ret = new Intent();
     String type = "text/*";
     String action = Intent.ACTION_VIEW;
-    String extension = Filer.getExtension(file.getName());
-    if (extension == null) return ret;
 
-    Cursor cursor = context.getContentResolver().query(MimeColumns.CONTENT_URI, 
-        new String[] { MimeColumns.MIMETYPE, MimeColumns.ACTION }, 
-        MimeColumns.EXTENSION+"=?", new String[] {extension},
-        null);
-    if (cursor.moveToFirst()) {
-      type = cursor.getString(0);
-      action = cursor.getString(1);
+    if (file.isDirectory()) {
+      type = "text/directory";
+      action = Intent.ACTION_RUN;
+    }
+    else {
+      String extension = Filer.getExtension(file.getName());
+      if (extension != null) {
+        Cursor cursor = context.getContentResolver().query(MimeColumns.CONTENT_URI, 
+            new String[] { MimeColumns.MIMETYPE, MimeColumns.ACTION }, 
+            MimeColumns.EXTENSION+"=?", new String[] {extension},
+            null);
+        if (cursor.moveToFirst()) {
+          type = cursor.getString(0);
+          action = cursor.getString(1);
+        }
+        cursor.close();
+      }
     }
     ret.setDataAndType(Uri.fromFile(file), type);
     ret.setAction(action);
-    cursor.close();
     return ret;
   }
 
@@ -169,6 +176,10 @@ public class Filer
   }
 
 
+  public static int resourceFromUri(Context context, Uri uri)
+  {
+    return context.getResources().getIdentifier(uri.getLastPathSegment(), uri.getScheme(), uri.getAuthority());
+  }
   public static boolean setImageFromUri(ImageView iv, Uri uri)
   {
     if (iv == null || uri == null) return false;
@@ -188,5 +199,28 @@ public class Filer
   {
     int idx = s.lastIndexOf('.');
     return idx == -1 ? null : s.substring(idx);
+  }
+
+  public static Intent shortcutIntent(Context context, File f)
+  {
+    Intent action_intent = Filer.getIntentFromFile(context, f);
+    Intent short_intent = new Intent();
+
+    int resid;
+
+    if (f.isDirectory())
+      resid = R.drawable.mimetype_folder;
+    else {
+      String icon = Filer.getIconFromExtension(context, Filer.getExtension(f.getName()));
+      resid = icon != null ? Filer.resourceFromUri(context, Uri.parse(icon)) : R.drawable.mimetype_ascii;
+    }
+
+    Intent.ShortcutIconResource short_icon = Intent.ShortcutIconResource.fromContext(context, resid);
+
+    short_intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, action_intent);
+    short_intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, f.getName());
+    short_intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, short_icon);
+
+    return short_intent;
   }
 }

@@ -18,7 +18,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="file" android:mimeType="text/directory" />
             </intent-filter>
+        </activity>
 
+        <activity android:name=".FilerActivity" 
+          android:label="@string/shortcut_app_name" 
+          android:icon="@drawable/filer">
             <intent-filter>
               <action android:name="android.intent.action.CREATE_SHORTCUT" />
               <category android:name="android.intent.category.DEFAULT" />

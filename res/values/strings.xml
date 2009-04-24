@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Filer</string>
+    <string name="shortcut_app_name">Filer Shortcut</string>
     <string name="app_description">Filer - File Manager</string>
     <string name="app_version">v1.0.0</string>
     <string name="app_about"><b>Original source by</b>\n<u>M. Wiggins</u>\n\n<b>Source code available</b>\n<u>http://github.com/lithium/filer</u>\n\nPublished by Hlidskialf Software\n\nNo warranty of any kind provided.</string>
@@ -70,9 +71,12 @@
     <string name="dialog_rename_title">Rename file</string>
     <string name="dialog_rename_splash">New name of the file</string>
    
-    <string name="activity_not_found">No activity found</string>
+    <string name="create_shortcut_title">Create shortcut</string>
+    <string name="create_shortcut_splash">Name for the new shortcut</string>
+
 
     <!-- messages -->
+    <string name="activity_not_found">No activity found</string>
     <string name="directory_created">%s: directory created</string>
     <string name="file_renamed">%s renamed to %s</string>
     <string name="file_deleted">%s deleted</string>
