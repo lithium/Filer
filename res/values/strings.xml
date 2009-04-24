@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Filer</string>
+    <string name="app_description">Filer - File Manager</string>
     <string name="app_version">v1.0.0</string>
-    <string name="app_about">Published by Hlidskialf Software\nNo warranty of any kind provided.</string>
+    <string name="app_about"><b>Original source by</b>\n<u>M. Wiggins</u>\n\n<b>Source code available</b>\n<u>http://github.com/lithium/filer</u>\n\nPublished by Hlidskialf Software\n\nNo warranty of any kind provided.</string>
 
 
     <!-- phrases used in dialogs or toast -->

@@ -4,15 +4,32 @@
       android:versionCode="10000"
       android:versionName="1.0.0">
     <application android:label="@string/app_name">
-        <activity android:name=".FilerActivity" android:label="@string/app_name" android:icon="@drawable/filer">
+        <activity android:name=".FilerActivity" 
+          android:launchMode="singleInstance"
+          android:label="@string/app_name" 
+          android:icon="@drawable/filer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.RUN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="file" android:mimeType="text/directory" />
+            </intent-filter>
+
+            <intent-filter>
+              <action android:name="android.intent.action.CREATE_SHORTCUT" />
+              <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter> 
         </activity>
 
         <activity android:name=".FilerPreferencesActivity" />
-        <provider android:name="com.hlidskialf.android.filer.MimeProvider" android:authorities="com.hlidskialf.android.filer"/>
+
+        <provider android:name="com.hlidskialf.android.filer.MimeProvider" 
+                  android:authorities="com.hlidskialf.android.filer"/>
+
     </application>
 
 </manifest> 
