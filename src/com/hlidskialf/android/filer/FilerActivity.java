@@ -308,12 +308,20 @@ public class FilerActivity extends ListActivity
       return;
     }
 
+    Intent intent = Filer.getIntentFromFile(this, f);
     try {
-      Intent intent = Filer.getIntentFromFile(this, f);
       startActivityForResult(intent,REQUEST_FILE_INTENT);
     } catch (android.content.ActivityNotFoundException ex) {
-      Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
-      t.show();
+      String type = intent.getType();
+      if (type.startsWith("text/")) {
+        intent = new Intent(this, SimpleTextViewer.class);
+        intent.setDataAndType(Uri.fromFile(f), type);
+        startActivityForResult(intent, REQUEST_FILE_INTENT);
+      }
+      else {
+        Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
+        t.show();
+      }
     }
   }
   @Override 
@@ -406,6 +414,28 @@ public class FilerActivity extends ListActivity
           })
           .show();
         return true;
+      case R.id.context_menu_info: {
+        View layout = LayoutInflater.from(this).inflate(R.layout.file_info, null);
+        TextView tv;
+        tv = (TextView)layout.findViewById(R.id.file_info_path);
+        tv.setText(f.getAbsolutePath());
+
+        tv = (TextView)layout.findViewById(R.id.file_info_type);
+        tv.setText(Filer.getMimeFromFile(this, f));
+
+        tv = (TextView)layout.findViewById(R.id.file_info_mtime);
+        tv.setText(Filer.format_date(f.lastModified()));
+
+        tv = (TextView)layout.findViewById(R.id.file_info_size);
+        tv.setText(Filer.format_size(Filer.disk_usage(f)));
+
+        new AlertDialog.Builder(this)
+          .setTitle(getString(R.string.file_info_title, f.getName()))
+          .setView( layout )
+          .setPositiveButton(android.R.string.ok, null)
+          .show();
+        return true;
+      }
     }
     return true;
   }

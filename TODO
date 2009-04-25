@@ -1,14 +1,13 @@
 Features
 ----
 Open As...
-properties dialog
 fallback simple text viewer
+confirm-i on delete
 
 UI Cleanup
 ---
 TextView marquee on filename
 labels on yank buttons
-confirm-i on delete
 
 Bugs
 ---

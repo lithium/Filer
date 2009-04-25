@@ -112,6 +112,25 @@ public class Filer
     cursor.close();
     return ret;
   }
+  public synchronized static String getMimeFromFile(Context context, File file)
+  {
+    String ret = null;
+    if (file.isDirectory()) return "text/directory";
+    String extension = Filer.getExtension(file.getName());
+    if (extension == null) return ret;
+
+    Cursor cursor = context.getContentResolver().query(MimeColumns.CONTENT_URI, 
+        new String[] { MimeColumns.MIMETYPE, MimeColumns.ACTION }, 
+        MimeColumns.EXTENSION+"=?", new String[] {extension},
+        null);
+
+    if (cursor.moveToFirst()) {
+      ret = cursor.getString(0);
+    }
+    cursor.close();
+
+    return ret;
+  }
   public synchronized static Intent getIntentFromFile(Context context, File file)
   {
     Intent ret = new Intent();
@@ -222,5 +241,21 @@ public class Filer
     short_intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, short_icon);
 
     return short_intent;
+  }
+
+  public static long disk_usage(File f)
+  {
+    if (f.isDirectory()) {
+      int l = 0;
+      String ls[] = f.list();
+      int i;
+      for (i=0; i < ls.length; i++) {
+        l += disk_usage(new File(f, ls[i]));
+      }
+      return l;
+    }
+    else {
+      return f.length();
+    }
   }
 }

@@ -25,6 +25,7 @@
     <string name="open_as">Open as...</string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    <string name="info">Properties</string>
     <string name="unyank_all">Unselect all</string>
     <string name="copy_here">Copy here</string>
     <string name="move_here">Move here</string>
@@ -73,6 +74,15 @@
    
     <string name="create_shortcut_title">Create shortcut</string>
     <string name="create_shortcut_splash">Name for the new shortcut</string>
+
+
+
+    <string name="file_info_title">Properties of %s</string>
+    <string name="file_info_path">Absolute path:</string>
+    <string name="file_info_type">File type:</string>
+    <string name="file_info_mtime">Last modified:</string>
+    <string name="file_info_size">Size:</string>
+
 
 
     <!-- messages -->
