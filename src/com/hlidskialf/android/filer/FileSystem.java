@@ -95,7 +95,7 @@ public class FileSystem
     while (!log.isCancelled() && ((len = in.read(buf)) > 0)) {
       red += len;
       out.write(buf, 0, len);
-      if (++i % 5 == 0)
+      if (++i % 200 == 0)
         log.progress_update(red);
     }
     in.close();
