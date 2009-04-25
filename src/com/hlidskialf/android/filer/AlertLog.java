@@ -1,24 +1,27 @@
 package com.hlidskialf.android.filer;
 
-import android.os.Handler;
-import android.os.Message;
-import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.widget.TextView;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 public class AlertLog extends Handler {
   private AlertDialog mDialog = null;
   private Context mContext = null;
   private TextView mText = null;
   private DoneListener mDoneListener;
+  private CancelListener mCancelListener;
   private ScrollView mScroll = null;
   private ProgressDialog mProgress = null;
+  private boolean mCanceled = false;
 
   private static final int MSG_DISMISS=0;
   private static final int MSG_APPEND=1;
@@ -30,6 +33,9 @@ public class AlertLog extends Handler {
   public interface DoneListener {
     public void done();
   };
+  public interface CancelListener {
+    public void cancel();
+  };
 
   public AlertLog(Context context, int title_res)
   {
@@ -39,16 +45,31 @@ public class AlertLog extends Handler {
     mDialog = new AlertDialog.Builder(context)
       .setTitle(title_res)
       .setView(v)
+      .setCancelable(false)
+      .setOnCancelListener(new DialogInterface.OnCancelListener() {
+        public void onCancel(DialogInterface dia) { 
+          mCanceled = true;
+          AlertLog.this.dismiss(); 
+        }
+      })
       .show();
     mText = (TextView)mDialog.findViewById(android.R.id.text1);
     mScroll = (ScrollView)mDialog.findViewById(android.R.id.list);
 
     mProgress = new ProgressDialog(context);
     mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+    mProgress.setOnCancelListener(new DialogInterface.OnCancelListener() {
+      public void onCancel(DialogInterface dia) { 
+        android.util.Log.v("progress","cancel");
+        if (mCancelListener != null)
+          mCancelListener.cancel();
+        mCanceled = true;
+      }
+    });
   }
-  public void setDoneListener(DoneListener listener) {
-    mDoneListener = listener;
-  }
+  public void setDoneListener(DoneListener listener) { mDoneListener = listener; }
+  public void setCancelListener(CancelListener listener) { mCancelListener = listener; }
+  public boolean isCancelled() { return mCanceled; }
 
   public void appendln(String text) { append(text+"\n"); }
   public void append(String text) { 
@@ -110,6 +131,7 @@ public class AlertLog extends Handler {
         ok.setOnClickListener(new View.OnClickListener() {
           public void onClick(View v) { dismiss(); }
         });
+        mDialog.setCancelable(true);
         break;
       }
       case MSG_PROGRESS_START: {

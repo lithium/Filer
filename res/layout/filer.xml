@@ -55,7 +55,6 @@
     android:layout_height="fill_parent"
     android:layout_above="@id/yank_bar"
     android:choiceMode="multipleChoice"
-    android:drawSelectorOnTop="false"
     />
 </RelativeLayout>
 

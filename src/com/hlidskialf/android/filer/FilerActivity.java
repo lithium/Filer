@@ -32,55 +32,6 @@ import java.util.Comparator;
 import java.util.Stack;
 
 
-import android.widget.EditText;
-
-class AlertInput {
-  private AlertDialog mDialog;
-  private OnCompleteListener mListener;
-  private EditText mText;
-
-  public interface OnCompleteListener {
-    public void onComplete(String value);
-    public void onCancel();
-  };
-
-  public AlertInput(Context context, int title_res, String splash, String default_value)
-  {
-    LayoutInflater li = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View layout = li.inflate(R.layout.alertinput, null);
-
-    TextView tv = (TextView)layout.findViewById(android.R.id.text1);
-    tv.setText(splash);
-
-    mText = (EditText)layout.findViewById(android.R.id.text2);
-    mText.setHint(default_value);
-
-    mDialog = new AlertDialog.Builder(context)
-      .setTitle(title_res)
-      .setView(layout)
-      .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) { 
-          if (mListener != null) {
-            mListener.onComplete(mText.getText().toString());
-          }
-          dialog.dismiss();
-        }
-      })
-      .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) { 
-          if (mListener != null) {
-            mListener.onCancel();
-          }
-          dialog.dismiss(); 
-        }
-      })
-      .show();
-  }
-  public void setOnCompleteListener(OnCompleteListener listener) { mListener = listener; }
-}
-
-
-
 
 public class FilerActivity extends ListActivity
 {
@@ -181,7 +132,7 @@ public class FilerActivity extends ListActivity
   {
     if (mPrefs == null) mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-    mBrowseRoot = mPrefs.getBoolean(Filer.PREF_BROWSE_ROOT, true);
+    mBrowseRoot = mPrefs.getBoolean(Filer.PREF_BROWSE_ROOT, false);
     mRootPath = mBrowseRoot ? "/" : Environment.getExternalStorageDirectory().toString();
     mHideDot = mPrefs.getBoolean(Filer.PREF_HIDE_DOT, true);
     mHomePath = mPrefs.getString(Filer.PREF_HOME_PATH, "");
@@ -288,6 +239,7 @@ public class FilerActivity extends ListActivity
   {
     if (mIgnoreNextClick) {
       mIgnoreNextClick = false;
+      fillData(mStartFile);
       return;
     }
     String filename = mCurFiles.get(pos);
@@ -331,7 +283,6 @@ public class FilerActivity extends ListActivity
     String filename = mCurFiles.get(info.position);
 
     if (filename.equals("..")) { // long click on .. goes to home
-      fillData(mStartFile);
       mIgnoreNextClick = true;
       return;
     }
@@ -625,6 +576,7 @@ public class FilerActivity extends ListActivity
   {
     ArrayList<File> files;
     ListView lv = new ListView(this);
+    lv.setCacheColorHint(0);
     if (path != null) {
       files = new ArrayList<File>(1);
       files.add(new File(path));

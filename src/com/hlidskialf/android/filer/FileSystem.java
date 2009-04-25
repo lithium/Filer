@@ -30,10 +30,11 @@ public class FileSystem
     if (!(dest.exists() && dest.isDirectory())) 
       return;
 
-    Thread thread = new Thread() {
+    class CopyThread extends Thread {
+      public boolean running = true;
       public void run() {
         int i;
-        for (i=0; i < src.length; i++) {
+        for (i=0; running && (i < src.length); i++) {
           File fsrc = new File(src[i]);
           if (!fsrc.exists()) {
             log.appendln(context.getString(R.string.file_not_found, fsrc.getAbsolutePath()));
@@ -52,6 +53,13 @@ public class FileSystem
         log.waitForIt();
       }
     };
+    final CopyThread thread = new CopyThread();
+    log.setCancelListener(new AlertLog.CancelListener() {
+      public void cancel() {
+        thread.running = false;
+        thread.interrupt();
+      }
+    });
     thread.start();
   }
   private static void file_deepcopy(Context context, AlertLog log, File src, File dest) 
@@ -84,7 +92,7 @@ public class FileSystem
 
     log.progress_start(context.getString(R.string.copy_here), msg, (int)src.length());
 
-    while ((len = in.read(buf)) > 0) {
+    while (!log.isCancelled() && ((len = in.read(buf)) > 0)) {
       red += len;
       out.write(buf, 0, len);
       if (++i % 5 == 0)

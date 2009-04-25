@@ -6,16 +6,11 @@ confirm-i on delete
 
 UI Cleanup
 ---
-TextView marquee on filename
 labels on yank buttons
 
 Bugs
 ---
-views not updating after delete selection?
-cancel file copy
 fix history stack
-initial browse_root state
-yank dialog black list 
 
 
 Marketing 

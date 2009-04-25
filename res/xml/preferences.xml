@@ -20,6 +20,7 @@
     <EditTextPreference android:key="home_path"
       android:title="@string/pref_home_path"
       android:summary="@string/pref_home_path_summary"
+      android:defaultValue="/sdcard"
       />
   </PreferenceCategory>
 
