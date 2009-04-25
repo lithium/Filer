@@ -1,8 +1,6 @@
 Features
 ----
 Open As...
-fallback simple text viewer
-confirm-i on delete
 
 UI Cleanup
 ---
@@ -13,12 +11,21 @@ Bugs
 fix history stack
 
 
+Future Features
+---
+fallback simple text viewer
+-i on copy/delete
+
+
+
+
+
+
+
 Marketing 
 ---
 help dialog
 howto videos
-
-
 
 HOWTOs
 ---

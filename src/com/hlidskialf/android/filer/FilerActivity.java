@@ -1,6 +1,7 @@
 package com.hlidskialf.android.filer;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,9 +24,13 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +52,10 @@ public class FilerActivity extends ListActivity
   private ArrayList<String> mYanked;
   private boolean mIgnoreNextClick = false; // hack for long click ..
   private Stack<String> mPathHistory;
+  private LayoutInflater mFactory;
+  private Dialog mDialog;
+
+  private List<String> mActionStrings;
 
   private IntentFilter mMountFilter;
   private BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
@@ -83,8 +92,7 @@ public class FilerActivity extends ListActivity
     public View getView(int pos, View v, ViewGroup parent) 
     {
       if (v == null) {
-        LayoutInflater li = getLayoutInflater();
-        v = li.inflate(R.layout.file_list_item, parent, false); 
+        v = mFactory.inflate(R.layout.file_list_item, parent, false); 
       }
       if (pos >= mCurFiles.size()) return v; // Only monkey seems to trigger this
 
@@ -147,6 +155,8 @@ public class FilerActivity extends ListActivity
     super.onCreate(icicle);
     setContentView(R.layout.filer);
 
+    mFactory = LayoutInflater.from(this);
+
     Intent trigger = getIntent();
 
     load_preferences();
@@ -175,6 +185,9 @@ public class FilerActivity extends ListActivity
       Toast t = Toast.makeText(this, R.string.toast_shortcut_hint, Toast.LENGTH_LONG);
       t.show();
     }
+
+
+    mActionStrings = Arrays.asList(getResources().getStringArray(R.array.actions));
 
     init_yankbar();
 
@@ -260,13 +273,7 @@ public class FilerActivity extends ListActivity
       return;
     }
 
-    Intent intent = Filer.getIntentFromFile(this, f);
-    try {
-      startActivityForResult(intent,REQUEST_FILE_INTENT);
-    } catch (android.content.ActivityNotFoundException ex) {
-      Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
-      t.show();
-    }
+    open_file(Filer.getIntentFromFile(this, f));
   }
   @Override 
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
@@ -306,6 +313,7 @@ public class FilerActivity extends ListActivity
 
     switch (item.getItemId()) {
       case R.id.context_menu_open:
+        open_as(f);
         return true;
       case R.id.context_menu_yank:
         yank_file(filename);
@@ -358,7 +366,7 @@ public class FilerActivity extends ListActivity
           .show();
         return true;
       case R.id.context_menu_info: {
-        View layout = LayoutInflater.from(this).inflate(R.layout.file_info, null);
+        View layout = mFactory.inflate(R.layout.file_info, null);
         TextView tv;
         tv = (TextView)layout.findViewById(R.id.file_info_path);
         tv.setText(f.getAbsolutePath());
@@ -669,7 +677,6 @@ public class FilerActivity extends ListActivity
     });
   }
 
-
   public void create_shortcut(File f)
   {
     final Intent short_intent = Filer.shortcutIntent(this, f);
@@ -683,5 +690,57 @@ public class FilerActivity extends ListActivity
         FilerActivity.this.finish();
       }
     });
+  }
+
+  private void open_as(File f) 
+  {
+    final Intent intent = Filer.getIntentFromFile(this, f);
+    
+    View layout = mFactory.inflate(R.layout.open_as, null);
+    TextView tv;
+    tv = (TextView)layout.findViewById(R.id.file_info_path);
+    if (tv != null) tv.setText(f.getAbsolutePath());
+
+    final EditText mimetype = (EditText)layout.findViewById(R.id.edit_mime_mimetype);
+    mimetype.setText(intent.getType());
+    mimetype.setHint(intent.getType());
+
+
+    final Spinner spinner = (Spinner)layout.findViewById(R.id.edit_mime_action);
+    ArrayAdapter spinadapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, mActionStrings);
+    spinadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    spinner.setAdapter(spinadapter);
+    int spinidx = mActionStrings.indexOf(intent.getAction().replaceFirst("android.intent.action.","ACTION_"));
+    spinner.setSelection(spinidx, false);
+
+    mDialog = new AlertDialog.Builder(this)
+      .setTitle(R.string.open_as)
+      .setView(layout)
+      .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dia, int which) { 
+          String action = (String)spinner.getSelectedItem();
+          String type = mimetype.getText().toString();
+          intent.setDataAndType(intent.getData(), type);
+          intent.setAction(action);
+          open_file(intent);
+          dia.dismiss();
+        }
+      })
+      .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dia, int which) { dia.dismiss(); }
+      })
+      .show();
+  }
+
+  private void open_file(Intent intent)
+  {
+    if (intent == null) return;
+
+    try {
+      startActivityForResult(intent,REQUEST_FILE_INTENT);
+    } catch (android.content.ActivityNotFoundException ex) {
+      Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
+      t.show();
+    }
   }
 }

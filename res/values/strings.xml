@@ -78,7 +78,7 @@
 
 
     <string name="file_info_title">Properties of %s</string>
-    <string name="file_info_path">Absolute path:</string>
+    <string name="file_info_path">File path:</string>
     <string name="file_info_type">File type:</string>
     <string name="file_info_mtime">Last modified:</string>
     <string name="file_info_size">Size:</string>
