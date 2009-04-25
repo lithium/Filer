@@ -113,7 +113,7 @@ public class FilerActivity extends ListActivity
 
       if (name != null) name.setText(filename);
 
-      if (f.isDirectory()) { // directory
+      if (f.isDirectory() || filename.equals("..")) { // directory
         if (icon != null) icon.setImageResource(filename.equals("..") ? android.R.drawable.ic_menu_revert : android.R.drawable.ic_menu_more);
         if (mime != null) mime.setImageResource(R.drawable.mimetype_folder);
         if (size != null) size.setText( "" );

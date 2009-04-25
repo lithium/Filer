@@ -1,14 +1,16 @@
 Features
 ----
-Open As...
+
 
 UI Cleanup
 ---
-labels on yank buttons
+spacing/padding on dialogs
+
 
 Bugs
 ---
 fix history stack
+preserve dialogs on rotation
 
 
 Future Features

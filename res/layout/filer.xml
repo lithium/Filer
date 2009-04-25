@@ -21,29 +21,34 @@
     android:orientation="vertical"
     >
     <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
-      <ImageButton android:id="@+id/yank_bar_buffer"
+      <com.hlidskialf.android.widget.LabelImageButton android:id="@+id/yank_bar_buffer"
               android:layout_width="0dip" android:layout_height="wrap_content"
               android:layout_weight="1"
               android:src="@android:drawable/ic_menu_agenda"
-              android:text="@string/yank_buffer" />
+              android:text="@string/yank_buffer" 
+              android:textColor="#ff000000"
+              />
 
-      <ImageButton android:id="@+id/yank_bar_copy"
+      <com.hlidskialf.android.widget.LabelImageButton android:id="@+id/yank_bar_copy"
               android:layout_width="0dip" android:layout_height="wrap_content"
               android:layout_weight="1"
               android:text="@string/copy_here" 
               android:src="@android:drawable/ic_menu_share"
+              android:textColor="#ff000000"
               />
-      <ImageButton android:id="@+id/yank_bar_move"
+      <com.hlidskialf.android.widget.LabelImageButton android:id="@+id/yank_bar_move"
               android:layout_width="0dip" android:layout_height="wrap_content"
               android:layout_weight="1"
               android:text="@string/move_here" 
               android:src="@drawable/ic_menu_move"
+              android:textColor="#ff000000"
               />
-      <ImageButton android:id="@+id/yank_bar_delete"
+      <com.hlidskialf.android.widget.LabelImageButton android:id="@+id/yank_bar_delete"
               android:layout_width="0dip" android:layout_height="wrap_content"
               android:layout_weight="1"
               android:text="@string/delete_all" 
               android:src="@android:drawable/ic_menu_delete"
+              android:textColor="#ff000000"
               />
     </LinearLayout>
   </LinearLayout>

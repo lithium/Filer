@@ -19,7 +19,7 @@
     
 
     <!-- actions -->
-    <string name="yank_buffer">Show files</string>
+    <string name="yank_buffer">Selection</string>
     <string name="yank">Select</string>
     <string name="unyank">Un-Select</string>
     <string name="open_as">Open as...</string>
@@ -27,12 +27,12 @@
     <string name="delete">Delete</string>
     <string name="info">Properties</string>
     <string name="unyank_all">Unselect all</string>
-    <string name="copy_here">Copy here</string>
-    <string name="move_here">Move here</string>
+    <string name="copy_here">Copy</string>
+    <string name="move_here">Move</string>
     <string name="new_directory">New folder</string>
     <string name="preferences">Preferences</string>
     <string name="help">Help</string>
-    <string name="delete_all">Delete all</string>
+    <string name="delete_all">Delete</string>
     <string name="sort_by">Sort by</string>
     <string name="new_mime">Add New Type</string>
     <string name="edit_mime">Edit Type</string>
