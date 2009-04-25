@@ -264,16 +264,8 @@ public class FilerActivity extends ListActivity
     try {
       startActivityForResult(intent,REQUEST_FILE_INTENT);
     } catch (android.content.ActivityNotFoundException ex) {
-      String type = intent.getType();
-      if (type.startsWith("text/")) {
-        intent = new Intent(this, SimpleTextViewer.class);
-        intent.setDataAndType(Uri.fromFile(f), type);
-        startActivityForResult(intent, REQUEST_FILE_INTENT);
-      }
-      else {
-        Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
-        t.show();
-      }
+      Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
+      t.show();
     }
   }
   @Override 

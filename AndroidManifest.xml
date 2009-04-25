@@ -31,8 +31,6 @@
 
         <activity android:name=".FilerPreferencesActivity" />
 
-        <activity android:name=".SimpleTextViewer" />
-
         <provider android:name="com.hlidskialf.android.filer.MimeProvider" 
                   android:authorities="com.hlidskialf.android.filer"/>
 
