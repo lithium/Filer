@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Filer</string>
+    <string name="app_name">Filer Beta</string>
     <string name="app_version">v1.0.3&#946;</string>
     <string name="shortcut_app_name">Filer Shortcut</string>
     <string name="app_description">Filer - File Manager</string>

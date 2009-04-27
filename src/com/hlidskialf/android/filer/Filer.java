@@ -19,7 +19,7 @@ import android.widget.ImageView;
 
 public class Filer 
 {
-  public static final String PACKAGE_NAME="com.hlidskialf.android.filer";
+  public static final String PACKAGE_NAME="com.hlidskialf.android.filer.beta";
 
   public static final String PREF_BROWSE_ROOT = "browse_root";
   public static final String PREF_HIDE_DOT = "hide_dot";
