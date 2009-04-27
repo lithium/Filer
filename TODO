@@ -11,6 +11,7 @@ Bugs
 ---
 fix history stack
 preserve dialogs on rotation
+errors in alertlog
 
 
 Future Features

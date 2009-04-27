@@ -90,8 +90,8 @@ public class MimePreference extends DialogPreference
     tv = (TextView)v.findViewById(android.R.id.button3);
     tv.setText(Filer.MimeColumns.ACTION);
 
-    Button b = (Button)v.findViewById(R.id.button_newmime);
-    b.setOnClickListener(new Button.OnClickListener() { 
+    View b = (View)v.findViewById(R.id.button_newmime);
+    b.setOnClickListener(new View.OnClickListener() { 
       public void onClick(View v) {
         mEditDialog = new EditMimeDialog(mContext, R.string.new_mime, 0);
       }

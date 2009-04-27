@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.webkit.WebView;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -451,6 +452,7 @@ public class FilerActivity extends ListActivity
         startActivityForResult( new Intent(this, FilerPreferencesActivity.class), REQUEST_PREFERENCES );
         return true;
       case R.id.options_menu_help:
+        show_help();
         return true;
     }
     return false;
@@ -742,5 +744,20 @@ public class FilerActivity extends ListActivity
       Toast t = Toast.makeText(FilerActivity.this, R.string.activity_not_found, Toast.LENGTH_SHORT);
       t.show();
     }
+  }
+
+  private void show_help()
+  {
+    View layout = mFactory.inflate(R.layout.help,null);
+    WebView webv = (WebView)layout.findViewById(R.id.webhelp);
+    String data = getString(R.string.help_body);
+    webv.loadDataWithBaseURL( "filer://help/home", data, "text/html", "UTF-8" , "filer://help/fail");
+
+    webv.setScrollBarStyle(WebView.SCROLLBARS_INSIDE_INSET);
+    new AlertDialog.Builder(this)
+      .setTitle(R.string.help_title)
+      .setView( layout )
+      .setPositiveButton(android.R.string.ok, null)
+      .show();
   }
 }
