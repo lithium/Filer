@@ -3,6 +3,9 @@
       package="com.hlidskialf.android.filer.beta"
       android:versionCode="10003"
       android:versionName="1.0.3">
+
+    <uses-sdk android:minSdkVersion="2" />
+
     <application android:label="@string/app_name" android:icon="@drawable/filer">
         <activity android:name="com.hlidskialf.android.filer.FilerActivity" 
           android:launchMode="singleInstance"
