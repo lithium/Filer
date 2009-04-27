@@ -19,6 +19,8 @@ import android.widget.ImageView;
 
 public class Filer 
 {
+  public static final String PACKAGE_NAME="com.hlidskialf.android.filer";
+
   public static final String PREF_BROWSE_ROOT = "browse_root";
   public static final String PREF_HIDE_DOT = "hide_dot";
   public static final String PREF_HOME_PATH = "home_path";
@@ -54,7 +56,7 @@ public class Filer
 
 
   public static class MimeColumns implements BaseColumns {
-    public static final Uri CONTENT_URI = Uri.parse("content://com.hlidskialf.android.filer/mimetype");
+    public static final Uri CONTENT_URI = Uri.parse("content://"+Filer.PACKAGE_NAME+"/mimetype");
     public static final String _ID = "_id";
     public static final String DEFAULT_SORT_ORDER = "mimetype ASC";
     public static final String TABLE_NAME = "mimetypes";

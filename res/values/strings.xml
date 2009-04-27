@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Filer</string>
+    <string name="app_version">v1.0.3&#946;</string>
     <string name="shortcut_app_name">Filer Shortcut</string>
     <string name="app_description">Filer - File Manager</string>
-    <string name="app_version">v1.0.2</string>
     <string name="app_about"><b>Original source by</b>\n<u>M. Wiggins</u>\n\n<b>Source code available</b>\n<u>http://github.com/lithium/filer</u>\n\nPublished by Hlidskialf Software\n\nNo warranty of any kind provided.</string>
-
 
     <!-- phrases used in dialogs or toast -->
     <string name="no_storage">No storage found.</string>
@@ -29,7 +28,7 @@
     <string name="unyank_all">Unselect all</string>
     <string name="copy_here">Copy</string>
     <string name="move_here">Move</string>
-    <string name="new_directory">New folder</string>
+    <string name="new_directory">New directory</string>
     <string name="preferences">Preferences</string>
     <string name="help">Help</string>
     <string name="delete_all">Delete</string>
@@ -67,7 +66,7 @@
 
     <string name="dialog_mkdir_title">Make new directory</string>
     <string name="dialog_mkdir_splash">Name of the new directory</string>
-    <string name="dialog_mkdir_hint">New Folder</string>
+    <string name="dialog_mkdir_hint">New Directory</string>
 
     <string name="dialog_rename_title">Rename file</string>
     <string name="dialog_rename_splash">New name of the file</string>
@@ -101,9 +100,20 @@
     <!-- help -->
     <string name="help_title">Filer Help</string>
     <string name="help_body"><![CDATA[
-      <h2>What is filer?</h2>
+      <h2>Table of Contents</h2>
+        <ol>
+          <li><a href=\"#about\">What Is Filer?</a></li>
+          <li><a href=\"#faq\">F.A.Q.s</a></li>
+          <li><a href=\"#tips\">Tips</a></li>
+          <li><a href=\"#guide\">User Guide</a></li>
+          <li><a href=\"#howto\">How-to Videos</a></li>
+        </ol>
+      
+      <a name=\"#about\"></a><h2>1. What Is filer?</h2>
       <p>Filer is a file system interface, it's purpose is to allow you to browse and manage files stored on memory cards.</p>
       <a href=\"#howto\">How-to videos</a>
+
+      <a name=\"faq\"></a><h2>2. F.A.Q.s</h2>
       <h3>How do I use it?</h3>
       <p>Using filer revolves around the <a href=\"#selection\">Selection</a>.  
         <ol>
@@ -117,17 +127,34 @@
       <p>Long-click on a file to bring up the context menu, choose Select; the file will now have an orange background, indicating it has been selected.</p>
       <h3>What does .. mean?</h3>
       <p>\"..\" is shorthand for the Parent Directory, clicking it will take you up one directory. Long-Clicking .. will jump to the directory you started in.</p>
-      <h2>Tips</h2>
+      <h3>How do I unselect all files?</h3>
+      <p>You can clear the selection by clicking on <b>Selection</b> on the <b>Selection Bar</b> and choosing <b>Unselect All</b>.  Unselect all is also avaiable in the menu if there are files selected.</p>
+
+      <a name=\"tips\"></a><h2>3. Tips</h2>
+      <h3>Move instead of copy</h3>
+      <p>Moving a file is much faster than copying a file, because a move is actually just renaming the file.  Copying files must make a byte for byte copy and is much slower.</p>
       <h3>Jump to start directory</h3>
       <p>If you Long-Click on .., it will jump to the starting directory.  Usually this is the Home Directory, or /sdcard</p>
-      <h2>User Guide</h2>
+
+      <a name=\"guide\"></a><h2>4. User Guide</h2>
       <a name=\"selection\"></a><h3>Selection</h3>
       <p>The <b>Selection</b> is the list of files you have currently highlighted </p>
       <a name=\"selection-bar\"></a><h3>Selection Bar</h3>
-      <p><img src="file:///android_asset/yankbar.jpg"> </p>
+      <p>The <b>Selection Bar</b> is shown when there are files selected, it displays the 4 options you can take on the selected files:
+      <img src="file:///android_asset/yankbar.jpg"> 
+      <ul>
+        <li><b>Selection</b> - Shows all the currently selected files</li>
+        <li><b>Copy</b> - Copies the selected files into the current directory</li>
+        <li><b>Move</b> - Moves the selected files into the current directory</li>
+        <li><b>Delete</b> - Delete the selected files</li>
+      </ul>
+      </p>
 
-      <a name=\"howto\"><h2>Howto Videos</h2>
-      <a href=\"http://www.youtube.com/watch?v=DndZH65s52g\">Selecting Files</a><br/>
-      <a href=\"http://www.youtube.com/watch?v=IR5ChsSbV9o\">Copying Files</a>
+      <a name=\"howto\"><h2>5. Howto Videos</h2>
+      <a href=\"http://www.youtube.com/watch?v=xMeUyB-oh7Y\">Selecting Files</a><br/>
+      <a href=\"\">Copying Files</a><br/>
+      <a href=\"\">Moving Files</a><br/>
+      <a href=\"\">Deleting Files</a><br/>
+      <a href=\"\">Adding a File Type</a><br/>
     ]]></string>
 </resources>

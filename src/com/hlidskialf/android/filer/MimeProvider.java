@@ -22,8 +22,8 @@ public class MimeProvider extends ContentProvider {
   public static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
   static {
-    sUriMatcher.addURI("com.hlidskialf.android.filer", "mimetype", URI_MATCH_MIMETYPE);
-    sUriMatcher.addURI("com.hlidskialf.android.filer", "mimetype/#", URI_MATCH_MIMETYPE_ID);
+    sUriMatcher.addURI(Filer.PACKAGE_NAME, "mimetype", URI_MATCH_MIMETYPE);
+    sUriMatcher.addURI(Filer.PACKAGE_NAME, "mimetype/#", URI_MATCH_MIMETYPE_ID);
   }
 
   private static class MimeDatabaseHelper extends SQLiteOpenHelper {
@@ -50,24 +50,24 @@ public class MimeProvider extends ContentProvider {
 
       String query = "INSERT INTO "+ Filer.MimeColumns.TABLE_NAME + 
                        "(extension, mimetype, icon, action) VALUES ";
-      db.execSQL(query+"('.html','text/html', 'drawable://com.hlidskialf.android.filer/mimetype_html',       'android.intent.action.VIEW');");
-      db.execSQL(query+"('.htm', 'text/html', 'drawable://com.hlidskialf.android.filer/mimetype_html',       'android.intent.action.VIEW');");
-      db.execSQL(query+"('.txt', 'text/*',    'drawable://com.hlidskialf.android.filer/mimetype_mime_txt',   'android.intent.action.VIEW');");
-      db.execSQL(query+"('.mpg', 'video/*',   'drawable://com.hlidskialf.android.filer/mimetype_video',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.wmv', 'video/*',   'drawable://com.hlidskialf.android.filer/mimetype_video',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.mov', 'video/*',   'drawable://com.hlidskialf.android.filer/mimetype_quicktime',  'android.intent.action.VIEW');");
-      db.execSQL(query+"('.avi', 'video/*',   'drawable://com.hlidskialf.android.filer/mimetype_video',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.wav', 'audio/*',   'drawable://com.hlidskialf.android.filer/mimetype_sound',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.mp3', 'audio/*',   'drawable://com.hlidskialf.android.filer/mimetype_sound',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.wma', 'audio/*',   'drawable://com.hlidskialf.android.filer/mimetype_sound',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.ogg', 'audio/*',   'drawable://com.hlidskialf.android.filer/mimetype_sound',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.amr', 'audio/*',   'drawable://com.hlidskialf.android.filer/mimetype_sound',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.mid', 'audio/midi','drawable://com.hlidskialf.android.filer/mimetype_midi',       'android.intent.action.VIEW');");
-      db.execSQL(query+"('.midi', 'audio/midi','drawable://com.hlidskialf.android.filer/mimetype_midi',      'android.intent.action.VIEW');");
-      db.execSQL(query+"('.png', 'image/*',   'drawable://com.hlidskialf.android.filer/mimetype_soffice',    'android.intent.action.VIEW');");
-      db.execSQL(query+"('.jpg', 'image/*',   'drawable://com.hlidskialf.android.filer/mimetype_soffice',    'android.intent.action.VIEW');");
-      db.execSQL(query+"('.bmp', 'image/*',   'drawable://com.hlidskialf.android.filer/mimetype_soffice',    'android.intent.action.VIEW');");
-      db.execSQL(query+"('.gif', 'image/*',   'drawable://com.hlidskialf.android.filer/mimetype_soffice',    'android.intent.action.VIEW');");
+      db.execSQL(query+"('.html','text/html', 'drawable://"+Filer.PACKAGE_NAME+"/mimetype_html',       'android.intent.action.VIEW');");
+      db.execSQL(query+"('.htm', 'text/html', 'drawable://"+Filer.PACKAGE_NAME+"/mimetype_html',       'android.intent.action.VIEW');");
+      db.execSQL(query+"('.txt', 'text/*',    'drawable://"+Filer.PACKAGE_NAME+"/mimetype_mime_txt',   'android.intent.action.VIEW');");
+      db.execSQL(query+"('.mpg', 'video/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_video',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.wmv', 'video/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_video',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.mov', 'video/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_quicktime',  'android.intent.action.VIEW');");
+      db.execSQL(query+"('.avi', 'video/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_video',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.wav', 'audio/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_sound',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.mp3', 'audio/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_sound',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.wma', 'audio/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_sound',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.ogg', 'audio/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_sound',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.amr', 'audio/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_sound',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.mid', 'audio/midi','drawable://"+Filer.PACKAGE_NAME+"/mimetype_midi',       'android.intent.action.VIEW');");
+      db.execSQL(query+"('.midi', 'audio/midi','drawable:/"+Filer.PACKAGE_NAME+"r/mimetype_midi',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.png', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
+      db.execSQL(query+"('.jpg', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
+      db.execSQL(query+"('.bmp', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
+      db.execSQL(query+"('.gif', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
     }
 
     @Override
