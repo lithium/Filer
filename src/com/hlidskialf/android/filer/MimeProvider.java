@@ -63,7 +63,7 @@ public class MimeProvider extends ContentProvider {
       db.execSQL(query+"('.ogg', 'audio/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_sound',      'android.intent.action.VIEW');");
       db.execSQL(query+"('.amr', 'audio/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_sound',      'android.intent.action.VIEW');");
       db.execSQL(query+"('.mid', 'audio/midi','drawable://"+Filer.PACKAGE_NAME+"/mimetype_midi',       'android.intent.action.VIEW');");
-      db.execSQL(query+"('.midi', 'audio/midi','drawable:/"+Filer.PACKAGE_NAME+"r/mimetype_midi',      'android.intent.action.VIEW');");
+      db.execSQL(query+"('.midi', 'audio/midi','drawable:/"+Filer.PACKAGE_NAME+"/mimetype_midi',      'android.intent.action.VIEW');");
       db.execSQL(query+"('.png', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
       db.execSQL(query+"('.jpg', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
       db.execSQL(query+"('.bmp', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
