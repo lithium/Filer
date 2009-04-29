@@ -339,7 +339,11 @@ public class FilerActivity extends ListActivity
             }
             else {
               msg = getString(R.string.file_renamed, filename, value);
+              Filer.MediaProviderBatch batch = new Filer.MediaProviderBatch(FilerActivity.this);
+              batch.remove(f);
               f.renameTo(fnew);
+              batch.add(fnew);
+              batch.commit();
             }
             fillData(mCurDir);
 
