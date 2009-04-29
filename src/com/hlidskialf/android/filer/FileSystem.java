@@ -33,6 +33,7 @@ public class FileSystem
     class CopyThread extends Thread {
       public boolean running = true;
       public void run() {
+        Filer.MediaProviderBatch batch = new Filer.MediaProviderBatch(context);
         int i;
         for (i=0; running && (i < src.length); i++) {
           File fsrc = new File(src[i]);
@@ -47,9 +48,11 @@ public class FileSystem
           }
           try {
             file_deepcopy(context, log, fsrc, fnew);
+            batch.add(fnew);
           } catch (java.io.IOException ex) {
           }
         }
+        batch.commit();
         log.waitForIt();
       }
     };
@@ -103,54 +106,6 @@ public class FileSystem
     log.progress_finish();
   }
 
-  /*
-  private static void file_copy(Context context, File src, File dest) throws java.io.IOException {
-    final FileInputStream in = new FileInputStream(src);
-    final FileOutputStream out = new FileOutputStream(dest);
-
-    final ProgressDialog pd = new ProgressDialog(context);
-    pd.setTitle(context.getString(R.string.copy_here));
-    pd.setMessage(context.getString(R.string.copying_file, src.getAbsolutePath()));
-    pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-    //final ProgressDialog pd = ProgressDialog.show(context, context.getString(R.string.copy_here), context.getString(R.string.copying_file, src.getAbsolutePath()));
-    pd.setMax( (int)src.length() );
-    pd.show();
-
-    final Handler handler = new Handler() {
-      @Override
-      public void handleMessage(Message msg) {
-        if (msg.what == 0) 
-          pd.dismiss();
-        else
-          pd.incrementProgressBy(msg.what);
-      }
-    };
-
-    Thread thread = new Thread(new Runnable() {
-      public void run() {
-        try  {
-          byte[] buf = new byte[1024];
-          int len;
-          int i=0;
-          while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-            if (++i % 5 == 0)
-              handler.sendEmptyMessage(len*5);
-          }
-          in.close();
-          out.close();
-        } catch (java.io.IOException ex) {
-        }
-        handler.sendEmptyMessage(0);
-      }
-    });
-    thread.start();
-
-  }
-
-  
-
-  /* move */
   public static void move(Context _context, AlertLog _log, String[] _src, File _dest)
   {
     final Context context = _context;
@@ -163,6 +118,7 @@ public class FileSystem
 
     Thread thread = new Thread() {
       public void run() {
+        Filer.MediaProviderBatch batch = new Filer.MediaProviderBatch(context);
         int i;
         for (i=0; i < src.length; i++) {
           File fsrc = new File(src[i]);
@@ -176,8 +132,11 @@ public class FileSystem
             continue; 
           }
           log.appendln(fsrc.getAbsolutePath() + " -> " + fnew.getAbsolutePath());
+          batch.remove(fsrc);
           fsrc.renameTo(fnew);
+          batch.add(fnew);
         }
+        batch.commit();
         log.waitForIt();
       }
     };
@@ -185,7 +144,6 @@ public class FileSystem
   }
 
 
-  /* delete */
   public static void delete(Context _context, AlertLog _log, String[] _src, boolean _recursive)
   {
     final Context context = _context;
@@ -195,6 +153,7 @@ public class FileSystem
 
     Thread thread = new Thread() {
       public void run() {
+        Filer.MediaProviderBatch batch = new Filer.MediaProviderBatch(context);
         int i;
         for (i=0; i < src.length; i++) {
           File fsrc = new File(src[i]);
@@ -204,13 +163,17 @@ public class FileSystem
           }
           if (recursive) {
             file_deepdelete(context, log, fsrc);
+            batch.remove(fsrc);
           } else {
             if (fsrc.isDirectory() && fsrc.list().length > 0) 
               log.appendln(context.getString(R.string.directory_not_empty, fsrc.getAbsolutePath()));
-            else
+            else {
               file_delete(context, log, fsrc);
+              batch.remove(fsrc);
+            }
           }
         }
+        batch.commit();
         log.waitForIt();
       }
     };
