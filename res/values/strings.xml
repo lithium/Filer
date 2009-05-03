@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Filer Beta</string>
-    <string name="app_version">v1.0.4&#946;</string>
+    <string name="app_name">Filer</string>
+    <string name="app_version">v1.0.5&#946;</string>
     <string name="shortcut_app_name">Filer Shortcut</string>
     <string name="app_description">Filer - File Manager</string>
     <string name="app_about"><b>Original source by</b>\n<u>M. Wiggins</u>\n\n<b>Source code available</b>\n<u>http://github.com/lithium/filer</u>\n\nPublished by Hlidskialf Software\n\nNo warranty of any kind provided.</string>
@@ -25,6 +25,7 @@
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
     <string name="info">Properties</string>
+    <string name="yank_all">Select all</string>
     <string name="unyank_all">Unselect all</string>
     <string name="copy_here">Copy</string>
     <string name="move_here">Move</string>
@@ -89,7 +90,7 @@
     <string name="directory_created">%s: directory created</string>
     <string name="file_renamed">%s renamed to %s</string>
     <string name="file_deleted">%s deleted</string>
-    <string name="copying_file">%s -> %s</string>
+    <string name="copying_file">%s\n=>\n%s</string>
 
     <string name="file_exists">%s: file already exists</string>
     <string name="file_not_found">%s: file not found</string>
@@ -114,7 +115,13 @@
       <a href=\"#howto\">How-to videos</a>
 
       <a name=\"faq\"></a><h2>2. F.A.Q.s</h2>
-      <h3>How do I use it?</h3>
+      <ol>
+        <li><a href=\"#faq1\">How do I use it?</a></li>
+        <li><a href=\"#faq2\">How do I select files?</a></li>
+        <li><a href=\"#faq3\">What does .. mean?</a></li>
+        <li><a href=\"#faq4\">How do I un-select all files?</a></li>
+      </ol>
+      <a name=\"faq1\"></a><h3>How do I use it?</h3>
       <p>Using filer revolves around the <a href=\"#selection\">Selection</a>.  
         <ol>
           <li>Select the files you want changed</li>
@@ -123,11 +130,11 @@
           <li>Confirm the results</li>
         </ol>
       </p>
-      <h3>How do I select files?</h3>
-      <p>Long-click on a file to bring up the context menu, choose Select; the file will now have an orange background, indicating it has been selected.</p>
-      <h3>What does .. mean?</h3>
+      <a name=\"faq2\"></a><h3>How do I select files?</h3>
+      <p>You can select files two different ways, either by tapping the icon on the left, or Long-click on a file to bring up the context menu, choose Select. Selected files have an orange background, indicating they are currently selected.</p>
+      <a name=\"faq3\"></a><h3>What does .. mean?</h3>
       <p>\"..\" is shorthand for the Parent Directory, clicking it will take you up one directory. Long-Clicking .. will jump to the directory you started in.</p>
-      <h3>How do I unselect all files?</h3>
+      <a name=\"faq4\"></a><h3>How do I unselect all files?</h3>
       <p>You can clear the selection by clicking on <b>Selection</b> on the <b>Selection Bar</b> and choosing <b>Unselect All</b>.  Unselect all is also avaiable in the menu if there are files selected.</p>
 
       <a name=\"tips\"></a><h2>3. Tips</h2>
@@ -151,10 +158,10 @@
       </p>
 
       <a name=\"howto\"><h2>5. Howto Videos</h2>
-      <a href=\"http://www.youtube.com/watch?v=xMeUyB-oh7Y\">Selecting Files</a><br/>
-      <a href=\"\">Copying Files</a><br/>
-      <a href=\"\">Moving Files</a><br/>
-      <a href=\"\">Deleting Files</a><br/>
+      <a href=\"http://www.youtube.com/watch?v=xMeUyB-oh7Y\">Selecting Files</a><br/><br/>
+      <a href=\"http://www.youtube.com/watch?v=110xEHGQqu4\">Copying Files</a><br/><br/>
+      <a href=\"http://www.youtube.com/watch?v=hhGuMMFD22U\">Moving Files</a><br/><br/>
+      <a href=\"\">Deleting Files</a><br/><br/>
       <a href=\"\">Adding a File Type</a><br/>
     ]]></string>
 </resources>

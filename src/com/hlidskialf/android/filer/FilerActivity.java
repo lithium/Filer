@@ -98,7 +98,7 @@ public class FilerActivity extends ListActivity
       if (pos >= mCurFiles.size()) return v; // Only monkey seems to trigger this
 
 
-      String filename = mCurFiles.get(pos);
+      final String filename = mCurFiles.get(pos);
       File f = new File(mCurDir, filename);
 
       if (mYanked.contains(f.getAbsolutePath())) 
@@ -111,6 +111,22 @@ public class FilerActivity extends ListActivity
       TextView mtime = (TextView)v.findViewById(R.id.row_mtime);
       ImageView icon = (ImageView)v.findViewById(R.id.row_icon);
       ImageView mime = (ImageView)v.findViewById(R.id.row_mimetype);
+
+      final View row = v;
+      View.OnClickListener yank_listener = new View.OnClickListener() {
+        public void onClick(View mimev) {
+          if (is_file_yanked(filename)) {
+            unyank_file(filename);
+            row.setBackgroundResource(R.drawable.unyanked);
+          } else {
+            yank_file(filename);
+            row.setBackgroundResource(R.drawable.yanked);
+          }
+          update_yankbar_visibility();
+        }
+      };
+      mime.setOnClickListener(yank_listener);
+      icon.setOnClickListener(yank_listener);
 
       if (name != null) name.setText(filename);
 
@@ -428,6 +444,9 @@ public class FilerActivity extends ListActivity
       case R.id.options_menu_move:
         return true;
         */
+      case R.id.options_menu_yank_all:
+        yank_all();
+        return true;
       case R.id.options_menu_unyank_all:
         unyank_all();
         return true;
@@ -539,6 +558,15 @@ public class FilerActivity extends ListActivity
   private void unyank_all()
   {
     mYanked.clear();
+    fillData(mCurDir);
+    update_yankbar_visibility();
+  }
+  private void yank_all()
+  {
+    String[] ls = mCurDir.list();
+    int i;
+    for (i=0; i < ls.length; i++) 
+      yank_file(ls[i]);
     fillData(mCurDir);
     update_yankbar_visibility();
   }

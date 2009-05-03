@@ -9,7 +9,7 @@
     android:layout_height="32sp"
     android:layout_width="32sp"
     android:layout_alignParentLeft="true"
-    android:paddingTop="4sp"
+    android:padding="6sp"
     />
   <TextView 
     android:id="@+id/row_name"

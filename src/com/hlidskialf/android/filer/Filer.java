@@ -23,7 +23,7 @@ import android.media.MediaScannerConnection;
 
 public class Filer 
 {
-  public static final String PACKAGE_NAME="com.hlidskialf.android.filer.beta";
+  public static final String PACKAGE_NAME="com.hlidskialf.android.filer";
 
   public static final String PREF_BROWSE_ROOT = "browse_root";
   public static final String PREF_HIDE_DOT = "hide_dot";
@@ -344,6 +344,10 @@ public class Filer
         mScanner = new MediaScannerConnection(context, this);
       }
       public void onMediaScannerConnected() {
+        if (mSize < 1) {
+          mScanner.disconnect(); 
+          return;
+        }
         mScanner.scanFile(mList.get(0), null);
       }
       public void onScanCompleted(String path, final Uri uri) {

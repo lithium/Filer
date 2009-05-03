@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.hlidskialf.android.filer.beta"
-      android:versionCode="10004"
-      android:versionName="1.0.4">
+      package="com.hlidskialf.android.filer"
+      android:versionCode="10005"
+      android:versionName="1.0.5">
 
     <uses-sdk android:minSdkVersion="2" />
 
@@ -35,7 +35,7 @@
         <activity android:name="com.hlidskialf.android.filer.FilerPreferencesActivity" />
 
         <provider android:name="com.hlidskialf.android.filer.MimeProvider" 
-                  android:authorities="com.hlidskialf.android.filer.beta"/>
+                  android:authorities="com.hlidskialf.android.filer"/>
 
     </application>
 
