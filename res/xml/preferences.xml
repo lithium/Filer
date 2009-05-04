@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <PreferenceCategory android:title="@string/pref_cat_filer">
+    <EditTextPreference android:key="home_path"
+      android:title="@string/pref_home_path"
+      android:summary="@string/pref_home_path_summary"
+      android:defaultValue="/sdcard"
+      />
 
+    <CheckBoxPreference android:key="recursive_delete"
+      android:title="@string/pref_recursive_delete"
+      android:summary="@string/pref_recursive_delete_summary"
+      android:defaultValue="true"
+      />
+    <CheckBoxPreference android:key="back_exits"
+      android:title="@string/pref_back_exits"
+      android:summary="@string/pref_back_exits_summary"
+      android:defaultValue="false"
+      />
+  </PreferenceCategory>
+  <PreferenceCategory android:title="@string/pref_cat_files">
     <CheckBoxPreference android:key="hide_dot"
       android:title="@string/pref_hide_dot"
       android:summary="@string/pref_hide_dot_summary"
@@ -11,16 +28,6 @@
       android:title="@string/pref_browse_root"
       android:summary="@string/pref_browse_root_summary"
       android:defaultValue="false"
-      />
-    <CheckBoxPreference android:key="recursive_delete"
-      android:title="@string/pref_recursive_delete"
-      android:summary="@string/pref_recursive_delete_summary"
-      android:defaultValue="true"
-      />
-    <EditTextPreference android:key="home_path"
-      android:title="@string/pref_home_path"
-      android:summary="@string/pref_home_path_summary"
-      android:defaultValue="/sdcard"
       />
   </PreferenceCategory>
 

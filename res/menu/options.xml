@@ -4,6 +4,9 @@
     android:icon="@android:drawable/ic_menu_close_clear_cancel"
     android:visible="false"
     android:title="@string/unyank_all"/>
+  <item android:id="@+id/options_menu_yank_all"
+    android:icon="@android:drawable/ic_menu_sort_by_size"
+    android:title="@string/yank_all"/>
     <!--
   <item android:id="@+id/options_menu_copy"
     android:icon="@android:drawable/ic_menu_share"

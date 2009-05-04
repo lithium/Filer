@@ -14,18 +14,22 @@ import android.content.Context;
 import android.content.ContentValues;
 import android.content.ContentUris;
 import android.database.Cursor;
+import android.provider.MediaStore;
 import android.widget.ImageView;
+import java.util.List;
+import java.util.ArrayList;
+import android.media.MediaScannerConnection;
 
 
 public class Filer 
 {
   public static final String PACKAGE_NAME="com.hlidskialf.android.filer";
 
-  public static final String PREF_BROWSE_ROOT = "browse_root";
+  public static final String PREF_BACK_EXITS = "browse_root";
+  public static final String PREF_BROWSE_ROOT = "back_exits";
   public static final String PREF_HIDE_DOT = "hide_dot";
   public static final String PREF_HOME_PATH = "home_path";
   public static final String PREF_RECURSIVE_DELETE = "recursive_delete";
-
 
   public static final String FORMAT_DECIMAL = "0.#";
   public static final String FORMAT_DATE_TIME = "MMM dd HH:mm";
@@ -219,7 +223,7 @@ public class Filer
   public static String getExtension(String s)
   {
     int idx = s.lastIndexOf('.');
-    return idx == -1 ? null : s.substring(idx);
+    return idx == -1 ? null : s.substring(idx).toLowerCase();
   }
 
   public static Intent shortcutIntent(Context context, File f)
@@ -260,4 +264,102 @@ public class Filer
       return f.length();
     }
   }
+
+
+  public static class MediaProviderBatch
+  {
+    private List<String> mRem,mAdd;
+    private Context mContext;
+    private ContentResolver mResolver;
+    private MediaScannerConnection mScanner;
+
+    public MediaProviderBatch(Context context) 
+    {
+      mContext = context;
+      mResolver = context.getContentResolver();
+      mRem = new ArrayList<String>();
+      mAdd = new ArrayList<String>();
+    }
+
+    public void remove(File f) { recurse_file(mRem, f); }
+    public void add(File f) { recurse_file(mAdd, f); }
+    
+    private void recurse_file(List list, File f) 
+    {
+      if (f.isDirectory()) {
+        String[] ls = f.list();
+        int i;
+        for (i=0; i < ls.length; i++) {
+          this.recurse_file(list,new File(f, ls[i]));
+        }
+      } else {
+        String path = f.getAbsolutePath().toLowerCase();
+        if (path.endsWith(".jpg") || 
+            path.endsWith(".bmp") ||
+            path.endsWith(".png") || 
+            path.endsWith(".gif") || 
+            path.endsWith(".tif") || 
+            path.endsWith(".jpeg") || 
+            path.endsWith(".tiff")
+           )
+          list.add(path);
+      }
+    }
+    
+    private Uri get_image_uri(String path)
+    {
+      Cursor c = mResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 
+        new String[] {BaseColumns._ID}, 
+        MediaStore.MediaColumns.DATA+"=?",new String[] {path},null);
+      if (!c.moveToFirst()) return null;
+      return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(c.getInt(0)));
+    }
+
+    public void commit()
+    {
+      int i;
+      int l = mRem.size();
+      for (i=0; i < l; i++) {
+        Uri u = get_image_uri(mRem.get(i));
+        if (u != null)
+          mResolver.delete(u, null,null);
+      }
+    
+      MediaScannerHelper helper = new MediaScannerHelper(mContext, mAdd);
+      helper.scan();
+      
+    }
+
+    private static class MediaScannerHelper implements MediaScannerConnection.MediaScannerConnectionClient
+    {
+      private List<String> mList;
+      private int mCur,mSize;
+      private MediaScannerConnection mScanner;
+
+      public MediaScannerHelper(Context context, List<String> list)
+      {
+        mList = list;
+        mCur = 0;
+        mSize = list.size();
+        mScanner = new MediaScannerConnection(context, this);
+      }
+      public void onMediaScannerConnected() {
+        if (mSize < 1) {
+          mScanner.disconnect(); 
+          return;
+        }
+        mScanner.scanFile(mList.get(0), null);
+      }
+      public void onScanCompleted(String path, final Uri uri) {
+        if (++mCur >= mSize) {
+          mScanner.disconnect();
+        } else {
+          mScanner.scanFile(mList.get(mCur), null);
+        }
+      }
+
+      public void scan() { mScanner.connect(); }
+    }
+  }
+  
 }

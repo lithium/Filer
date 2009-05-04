@@ -28,6 +28,8 @@ public class AlertInput {
 
     mText = (EditText)layout.findViewById(android.R.id.text2);
     mText.setHint(default_value);
+    mText.setText(default_value);
+    mText.setSelectAllOnFocus(true);
 
     mDialog = new AlertDialog.Builder(context)
       .setTitle(title_res)

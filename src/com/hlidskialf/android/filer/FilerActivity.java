@@ -45,7 +45,8 @@ public class FilerActivity extends ListActivity
   static private final int REQUEST_FILE_INTENT=2;
 
   private File mRootFile,mCurDir,mStartFile;
-  private boolean mBrowseRoot,mHideDot,mRecursiveDelete,mCreatingShortcut;
+  private boolean mBrowseRoot,mHideDot,mRecursiveDelete,mBackExits;
+  private boolean mCreatingShortcut; 
   private String mRootPath,mHomePath;
   private ArrayList<String> mCurFiles;
   private FileListAdapter mFileAdapter;
@@ -98,7 +99,7 @@ public class FilerActivity extends ListActivity
       if (pos >= mCurFiles.size()) return v; // Only monkey seems to trigger this
 
 
-      String filename = mCurFiles.get(pos);
+      final String filename = mCurFiles.get(pos);
       File f = new File(mCurDir, filename);
 
       if (mYanked.contains(f.getAbsolutePath())) 
@@ -111,6 +112,22 @@ public class FilerActivity extends ListActivity
       TextView mtime = (TextView)v.findViewById(R.id.row_mtime);
       ImageView icon = (ImageView)v.findViewById(R.id.row_icon);
       ImageView mime = (ImageView)v.findViewById(R.id.row_mimetype);
+
+      final View row = v;
+      View.OnClickListener yank_listener = new View.OnClickListener() {
+        public void onClick(View mimev) {
+          if (is_file_yanked(filename)) {
+            unyank_file(filename);
+            row.setBackgroundResource(R.drawable.unyanked);
+          } else {
+            yank_file(filename);
+            row.setBackgroundResource(R.drawable.yanked);
+          }
+          update_yankbar_visibility();
+        }
+      };
+      mime.setOnClickListener(yank_listener);
+      icon.setOnClickListener(yank_listener);
 
       if (name != null) name.setText(filename);
 
@@ -145,6 +162,7 @@ public class FilerActivity extends ListActivity
     mRootPath = mBrowseRoot ? "/" : Environment.getExternalStorageDirectory().toString();
     mHideDot = mPrefs.getBoolean(Filer.PREF_HIDE_DOT, true);
     mHomePath = mPrefs.getString(Filer.PREF_HOME_PATH, "");
+    mBackExits = mPrefs.getBoolean(Filer.PREF_BACK_EXITS, false);
     
     if (mHomePath == null || mHomePath.length() < 1) 
       mHomePath = Environment.getExternalStorageDirectory().toString();
@@ -235,7 +253,7 @@ public class FilerActivity extends ListActivity
   }
   @Override
   public boolean onKeyDown(int code, KeyEvent event) {
-    if (code == KeyEvent.KEYCODE_BACK) {
+    if (!mBackExits && (code == KeyEvent.KEYCODE_BACK)) {
       if (mPathHistory.size() > 1) {
         mPathHistory.pop();
         fillData(new File( mPathHistory.peek() ));
@@ -339,7 +357,11 @@ public class FilerActivity extends ListActivity
             }
             else {
               msg = getString(R.string.file_renamed, filename, value);
+              Filer.MediaProviderBatch batch = new Filer.MediaProviderBatch(FilerActivity.this);
+              batch.remove(f);
               f.renameTo(fnew);
+              batch.add(fnew);
+              batch.commit();
             }
             fillData(mCurDir);
 
@@ -424,6 +446,9 @@ public class FilerActivity extends ListActivity
       case R.id.options_menu_move:
         return true;
         */
+      case R.id.options_menu_yank_all:
+        yank_all();
+        return true;
       case R.id.options_menu_unyank_all:
         unyank_all();
         return true;
@@ -535,6 +560,15 @@ public class FilerActivity extends ListActivity
   private void unyank_all()
   {
     mYanked.clear();
+    fillData(mCurDir);
+    update_yankbar_visibility();
+  }
+  private void yank_all()
+  {
+    String[] ls = mCurDir.list();
+    int i;
+    for (i=0; i < ls.length; i++) 
+      yank_file(ls[i]);
     fillData(mCurDir);
     update_yankbar_visibility();
   }

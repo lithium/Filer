@@ -68,6 +68,7 @@ public class MimeProvider extends ContentProvider {
       db.execSQL(query+"('.jpg', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
       db.execSQL(query+"('.bmp', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
       db.execSQL(query+"('.gif', 'image/*',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_soffice',    'android.intent.action.VIEW');");
+      db.execSQL(query+"('.apk', 'application/vnd.android.package-archive',   'drawable://"+Filer.PACKAGE_NAME+"/mimetype_tar',    'android.intent.action.VIEW');");
     }
 
     @Override
