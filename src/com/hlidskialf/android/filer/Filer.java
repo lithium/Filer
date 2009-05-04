@@ -25,11 +25,11 @@ public class Filer
 {
   public static final String PACKAGE_NAME="com.hlidskialf.android.filer";
 
-  public static final String PREF_BROWSE_ROOT = "browse_root";
+  public static final String PREF_BACK_EXITS = "browse_root";
+  public static final String PREF_BROWSE_ROOT = "back_exits";
   public static final String PREF_HIDE_DOT = "hide_dot";
   public static final String PREF_HOME_PATH = "home_path";
   public static final String PREF_RECURSIVE_DELETE = "recursive_delete";
-
 
   public static final String FORMAT_DECIMAL = "0.#";
   public static final String FORMAT_DATE_TIME = "MMM dd HH:mm";

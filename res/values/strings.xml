@@ -40,20 +40,26 @@
 
     <!-- preferences -->
     <string name="pref_cat_filer">Filer Preferences</string>
+    <string name="pref_home_path">Home directory</string>
+    <string name="pref_home_path_summary">Default starting directory</string>
+    <string name="pref_recursive_delete">Recursive delete</string>
+    <string name="pref_recursive_delete_summary">Delete non-empty directories</string>
+    <string name="pref_back_exits">Back button exits </string>
+    <string name="pref_back_exits_summary">No history support, pressing back exits.</string>
+
+    <string name="pref_cat_files">File Display</string>
     <string name="pref_hide_dot">Hide dot files</string>
     <string name="pref_hide_dot_summary">Hide files that start with a period</string>
     <string name="pref_browse_root">Show device files</string>
     <string name="pref_browse_root_summary">Show files not on removable media</string>
-    <string name="pref_home_path">Home directory</string>
-    <string name="pref_home_path_summary">Default starting directory</string>
+
     <string name="pref_cat_about">About</string>
     <string name="pref_about">About Filer</string>
     <string name="pref_about_summary">Version info and credits</string>
+
     <string name="pref_cat_mime">Mimetype Preferences</string>
     <string name="pref_mime">File types</string>
     <string name="pref_mime_summary">Configure file and mimetype associations</string>
-    <string name="pref_recursive_delete">Recursive delete</string>
-    <string name="pref_recursive_delete_summary">Delete non-empty directories</string>
 
     <!-- dialogs -->
     <string name="dialog_yank_buffer_title">Selected Files</string>

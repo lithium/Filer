@@ -45,7 +45,8 @@ public class FilerActivity extends ListActivity
   static private final int REQUEST_FILE_INTENT=2;
 
   private File mRootFile,mCurDir,mStartFile;
-  private boolean mBrowseRoot,mHideDot,mRecursiveDelete,mCreatingShortcut;
+  private boolean mBrowseRoot,mHideDot,mRecursiveDelete,mBackExits;
+  private boolean mCreatingShortcut; 
   private String mRootPath,mHomePath;
   private ArrayList<String> mCurFiles;
   private FileListAdapter mFileAdapter;
@@ -161,6 +162,7 @@ public class FilerActivity extends ListActivity
     mRootPath = mBrowseRoot ? "/" : Environment.getExternalStorageDirectory().toString();
     mHideDot = mPrefs.getBoolean(Filer.PREF_HIDE_DOT, true);
     mHomePath = mPrefs.getString(Filer.PREF_HOME_PATH, "");
+    mBackExits = mPrefs.getBoolean(Filer.PREF_BACK_EXITS, false);
     
     if (mHomePath == null || mHomePath.length() < 1) 
       mHomePath = Environment.getExternalStorageDirectory().toString();
@@ -251,7 +253,7 @@ public class FilerActivity extends ListActivity
   }
   @Override
   public boolean onKeyDown(int code, KeyEvent event) {
-    if (code == KeyEvent.KEYCODE_BACK) {
+    if (!mBackExits && (code == KeyEvent.KEYCODE_BACK)) {
       if (mPathHistory.size() > 1) {
         mPathHistory.pop();
         fillData(new File( mPathHistory.peek() ));
